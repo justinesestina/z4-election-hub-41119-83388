@@ -296,6 +296,18 @@ export default function Results() {
           })}
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-8 mt-16">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            Secure • Transparent • Democratic
+          </p>
+          <p className="text-xs text-muted-foreground mt-3 italic">
+            This website was created by Justine Ragaza, a student of the College of Computer Studies.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

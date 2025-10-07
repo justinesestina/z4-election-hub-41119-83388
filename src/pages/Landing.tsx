@@ -79,7 +79,7 @@ export default function Landing() {
             Campus Vote (VoteNet): A Department-Based Online Student Voting System
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-3 max-w-3xl mx-auto">
-            Empowering college elections through a secure, transparent, and real-time voting experience.
+            Empowering fair and transparent student elections across every college department.
           </p>
           <Button 
             size="lg" 
@@ -173,6 +173,9 @@ export default function Landing() {
           </p>
           <p className="text-sm text-muted-foreground mt-2">
             Secure • Transparent • Democratic
+          </p>
+          <p className="text-xs text-muted-foreground mt-3 italic">
+            This website was created by Justine Ragaza, a student of the College of Computer Studies.
           </p>
         </div>
       </footer>

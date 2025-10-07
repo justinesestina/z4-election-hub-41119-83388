@@ -1,81 +1,77 @@
 // Course to Department mapping
 export const courseMapping: Record<string, string> = {
+  // ARCH - Architecture & Design
+  'BS Architecture': 'ARCH',
+  'BS Interior Design': 'ARCH',
+  
+  // ARTS - Arts & Sciences
+  'BA Communication': 'ARTS',
+  'BA Political Science': 'ARTS',
+  
+  // BUS - Business Administration
+  'BSBA': 'BUS',
+  'BSEntrep': 'BUS',
+  'BSHRM': 'BUS',
+  
   // CCS - College of Computer Studies
   'BSIT': 'CCS',
   'BSCS': 'CCS',
   'BSIS': 'CCS',
-  'BSEMC': 'CCS',
   
-  // COE - College of Engineering
+  // EDUC - Education Department
+  'BSEd English': 'EDUC',
+  'BEEd': 'EDUC',
+  
+  // ENG - Engineering Department
   'BSCpE': 'ENG',
   'BSEE': 'ENG',
-  'BSCvE': 'ENG',
+  'BSCE': 'ENG',
   'BSME': 'ENG',
   
-  // CBA - College of Business and Accountancy
-  'BSBA': 'BUS',
-  'BSBA-FM': 'BUS',
-  'BSBA-MM': 'BUS',
-  'BSA': 'BUS',
-  'BSMA': 'BUS',
+  // NURS - Nursing / Health Sciences
+  'BS Nursing': 'NURS',
+  'BS Medical Technology': 'NURS',
   
-  // CAS - College of Arts and Sciences
-  'BAComm': 'ARTS',
-  'BSPsych': 'ARTS',
-  'BSBio': 'ARTS',
-  'BSPolSci': 'ARTS',
-  
-  // CONHS - College of Nursing and Health Sciences
-  'BSN': 'NURS',
-  'BSPT': 'NURS',
-  'BSPHAR': 'NURS',
-  'BSMLS': 'NURS',
-  
-  // COED - College of Education
-  'BSEd': 'EDUC',
-  'BEEd': 'EDUC',
-  'BPEd': 'EDUC',
-  'BTLEd': 'EDUC',
+  // PSYCH - Psychology Department
+  'BSP': 'PSYCH',
 };
 
 // Available courses with full names
 export const availableCourses = [
+  // ARCH
+  { code: 'BS Architecture', name: 'Bachelor of Science in Architecture', dept: 'ARCH' },
+  { code: 'BS Interior Design', name: 'Bachelor of Science in Interior Design', dept: 'ARCH' },
+  
+  // ARTS
+  { code: 'BA Communication', name: 'Bachelor of Arts in Communication', dept: 'ARTS' },
+  { code: 'BA Political Science', name: 'Bachelor of Arts in Political Science', dept: 'ARTS' },
+  
+  // BUS
+  { code: 'BSBA', name: 'Bachelor of Science in Business Administration', dept: 'BUS' },
+  { code: 'BSEntrep', name: 'Bachelor of Science in Entrepreneurship', dept: 'BUS' },
+  { code: 'BSHRM', name: 'Bachelor of Science in Hotel and Restaurant Management', dept: 'BUS' },
+  
   // CCS
   { code: 'BSIT', name: 'Bachelor of Science in Information Technology', dept: 'CCS' },
   { code: 'BSCS', name: 'Bachelor of Science in Computer Science', dept: 'CCS' },
   { code: 'BSIS', name: 'Bachelor of Science in Information Systems', dept: 'CCS' },
-  { code: 'BSEMC', name: 'Bachelor of Science in Entertainment and Multimedia Computing', dept: 'CCS' },
   
-  // COE
-  { code: 'BSCpE', name: 'Bachelor of Science in Computer Engineering', dept: 'COE' },
-  { code: 'BSEE', name: 'Bachelor of Science in Electrical Engineering', dept: 'COE' },
-  { code: 'BSCvE', name: 'Bachelor of Science in Civil Engineering', dept: 'COE' },
-  { code: 'BSME', name: 'Bachelor of Science in Mechanical Engineering', dept: 'COE' },
+  // EDUC
+  { code: 'BSEd English', name: 'Bachelor of Secondary Education - English', dept: 'EDUC' },
+  { code: 'BEEd', name: 'Bachelor of Elementary Education', dept: 'EDUC' },
   
-  // CBA
-  { code: 'BSBA', name: 'Bachelor of Science in Business Administration', dept: 'CBA' },
-  { code: 'BSBA-FM', name: 'BSBA - Financial Management', dept: 'CBA' },
-  { code: 'BSBA-MM', name: 'BSBA - Marketing Management', dept: 'CBA' },
-  { code: 'BSA', name: 'Bachelor of Science in Accountancy', dept: 'CBA' },
-  { code: 'BSMA', name: 'Bachelor of Science in Management Accounting', dept: 'CBA' },
+  // ENG
+  { code: 'BSCpE', name: 'Bachelor of Science in Computer Engineering', dept: 'ENG' },
+  { code: 'BSEE', name: 'Bachelor of Science in Electrical Engineering', dept: 'ENG' },
+  { code: 'BSCE', name: 'Bachelor of Science in Civil Engineering', dept: 'ENG' },
+  { code: 'BSME', name: 'Bachelor of Science in Mechanical Engineering', dept: 'ENG' },
   
-  // CAS
-  { code: 'BAComm', name: 'Bachelor of Arts in Communication', dept: 'CAS' },
-  { code: 'BSPsych', name: 'Bachelor of Science in Psychology', dept: 'CAS' },
-  { code: 'BSBio', name: 'Bachelor of Science in Biology', dept: 'CAS' },
-  { code: 'BSPolSci', name: 'Bachelor of Science in Political Science', dept: 'CAS' },
+  // NURS
+  { code: 'BS Nursing', name: 'Bachelor of Science in Nursing', dept: 'NURS' },
+  { code: 'BS Medical Technology', name: 'Bachelor of Science in Medical Technology', dept: 'NURS' },
   
-  // CONHS
-  { code: 'BSN', name: 'Bachelor of Science in Nursing', dept: 'CONHS' },
-  { code: 'BSPT', name: 'Bachelor of Science in Physical Therapy', dept: 'CONHS' },
-  { code: 'BSPHAR', name: 'Bachelor of Science in Pharmacy', dept: 'CONHS' },
-  { code: 'BSMLS', name: 'Bachelor of Science in Medical Laboratory Science', dept: 'CONHS' },
-  
-  // COED
-  { code: 'BSEd', name: 'Bachelor of Secondary Education', dept: 'COED' },
-  { code: 'BEEd', name: 'Bachelor of Elementary Education', dept: 'COED' },
-  { code: 'BPEd', name: 'Bachelor of Physical Education', dept: 'COED' },
-  { code: 'BTLEd', name: 'Bachelor of Technology and Livelihood Education', dept: 'COED' },
+  // PSYCH
+  { code: 'BSP', name: 'Bachelor of Science in Psychology', dept: 'PSYCH' },
 ];
 
 export const mapCourseToDepartment = (courseCode: string): string | null => {

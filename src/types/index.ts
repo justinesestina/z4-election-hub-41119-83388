@@ -36,13 +36,9 @@ export const POSITIONS = [
   'Secretary',
   'Treasurer',
   'Auditor',
-  'PRO',
-  'Creative/Multimedia Head',
-  'Logistics Head',
-  '1st Year Rep',
-  '2nd Year Rep',
-  '3rd Year Rep',
-  '4th Year Rep',
+  'PIO',
+  'Business Manager',
+  'Representative',
 ] as const;
 
 export type Position = typeof POSITIONS[number];
