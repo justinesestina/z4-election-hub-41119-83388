@@ -76,10 +76,10 @@ export default function Landing() {
           className="text-center max-w-4xl mx-auto"
         >
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
-            Secure • Fast • Departmental Voting
+            Campus Vote (VoteNet): A Department-Based Online Student Voting System
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Exercise your right to vote in your department's student council elections with our secure, transparent platform.
+          <p className="text-lg md:text-xl text-muted-foreground mb-3 max-w-3xl mx-auto">
+            Empowering college elections through a secure, transparent, and real-time voting experience.
           </p>
           <Button 
             size="lg" 

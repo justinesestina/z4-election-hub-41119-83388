@@ -1,82 +1,83 @@
 // Course to Department mapping
 export const courseMapping: Record<string, string> = {
   // CCS - College of Computer Studies
-  'it': 'CCS',
-  'information technology': 'CCS',
-  'computer science': 'CCS',
-  'cs': 'CCS',
-  'bsit': 'CCS',
-  'bscs': 'CCS',
+  'BSIT': 'CCS',
+  'BSCS': 'CCS',
+  'BSIS': 'CCS',
+  'BSEMC': 'CCS',
   
-  // Psychology
-  'psychology': 'PSYCH',
-  'psych': 'PSYCH',
-  'ab psychology': 'PSYCH',
-  'bs psychology': 'PSYCH',
+  // COE - College of Engineering
+  'BSCpE': 'ENG',
+  'BSEE': 'ENG',
+  'BSCvE': 'ENG',
+  'BSME': 'ENG',
   
-  // Business Administration
-  'business administration': 'BUS',
-  'business admin': 'BUS',
-  'bba': 'BUS',
-  'accountancy': 'BUS',
-  'accounting': 'BUS',
-  'bsa': 'BUS',
-  'management': 'BUS',
+  // CBA - College of Business and Accountancy
+  'BSBA': 'BUS',
+  'BSBA-FM': 'BUS',
+  'BSBA-MM': 'BUS',
+  'BSA': 'BUS',
+  'BSMA': 'BUS',
   
-  // Education
-  'elementary education': 'EDUC',
-  'secondary education': 'EDUC',
-  'education': 'EDUC',
-  'beed': 'EDUC',
-  'bsed': 'EDUC',
-  'teaching': 'EDUC',
+  // CAS - College of Arts and Sciences
+  'BAComm': 'ARTS',
+  'BSPsych': 'ARTS',
+  'BSBio': 'ARTS',
+  'BSPolSci': 'ARTS',
   
-  // Engineering
-  'civil engineering': 'ENG',
-  'mechanical engineering': 'ENG',
-  'electrical engineering': 'ENG',
-  'engineering': 'ENG',
-  'bsce': 'ENG',
-  'bsme': 'ENG',
-  'bsee': 'ENG',
+  // CONHS - College of Nursing and Health Sciences
+  'BSN': 'NURS',
+  'BSPT': 'NURS',
+  'BSPHAR': 'NURS',
+  'BSMLS': 'NURS',
   
-  // Nursing / Health Sciences
-  'nursing': 'NURS',
-  'bsn': 'NURS',
-  'health sciences': 'NURS',
-  'midwifery': 'NURS',
-  
-  // Arts & Sciences
-  'liberal arts': 'ARTS',
-  'ba': 'ARTS',
-  'bsc': 'ARTS',
-  'arts and sciences': 'ARTS',
-  'communication': 'ARTS',
-  'english': 'ARTS',
-  'mathematics': 'ARTS',
-  'biology': 'ARTS',
-  
-  // Architecture & Design
-  'architecture': 'ARCH',
-  'bs architecture': 'ARCH',
-  'interior design': 'ARCH',
-  'landscape architecture': 'ARCH',
+  // COED - College of Education
+  'BSEd': 'EDUC',
+  'BEEd': 'EDUC',
+  'BPEd': 'EDUC',
+  'BTLEd': 'EDUC',
 };
 
-export const mapCourseToDepartment = (course: string): string | null => {
-  const normalizedCourse = course.toLowerCase().trim();
-  return courseMapping[normalizedCourse] || null;
-};
+// Available courses with full names
+export const availableCourses = [
+  // CCS
+  { code: 'BSIT', name: 'Bachelor of Science in Information Technology', dept: 'CCS' },
+  { code: 'BSCS', name: 'Bachelor of Science in Computer Science', dept: 'CCS' },
+  { code: 'BSIS', name: 'Bachelor of Science in Information Systems', dept: 'CCS' },
+  { code: 'BSEMC', name: 'Bachelor of Science in Entertainment and Multimedia Computing', dept: 'CCS' },
+  
+  // COE
+  { code: 'BSCpE', name: 'Bachelor of Science in Computer Engineering', dept: 'COE' },
+  { code: 'BSEE', name: 'Bachelor of Science in Electrical Engineering', dept: 'COE' },
+  { code: 'BSCvE', name: 'Bachelor of Science in Civil Engineering', dept: 'COE' },
+  { code: 'BSME', name: 'Bachelor of Science in Mechanical Engineering', dept: 'COE' },
+  
+  // CBA
+  { code: 'BSBA', name: 'Bachelor of Science in Business Administration', dept: 'CBA' },
+  { code: 'BSBA-FM', name: 'BSBA - Financial Management', dept: 'CBA' },
+  { code: 'BSBA-MM', name: 'BSBA - Marketing Management', dept: 'CBA' },
+  { code: 'BSA', name: 'Bachelor of Science in Accountancy', dept: 'CBA' },
+  { code: 'BSMA', name: 'Bachelor of Science in Management Accounting', dept: 'CBA' },
+  
+  // CAS
+  { code: 'BAComm', name: 'Bachelor of Arts in Communication', dept: 'CAS' },
+  { code: 'BSPsych', name: 'Bachelor of Science in Psychology', dept: 'CAS' },
+  { code: 'BSBio', name: 'Bachelor of Science in Biology', dept: 'CAS' },
+  { code: 'BSPolSci', name: 'Bachelor of Science in Political Science', dept: 'CAS' },
+  
+  // CONHS
+  { code: 'BSN', name: 'Bachelor of Science in Nursing', dept: 'CONHS' },
+  { code: 'BSPT', name: 'Bachelor of Science in Physical Therapy', dept: 'CONHS' },
+  { code: 'BSPHAR', name: 'Bachelor of Science in Pharmacy', dept: 'CONHS' },
+  { code: 'BSMLS', name: 'Bachelor of Science in Medical Laboratory Science', dept: 'CONHS' },
+  
+  // COED
+  { code: 'BSEd', name: 'Bachelor of Secondary Education', dept: 'COED' },
+  { code: 'BEEd', name: 'Bachelor of Elementary Education', dept: 'COED' },
+  { code: 'BPEd', name: 'Bachelor of Physical Education', dept: 'COED' },
+  { code: 'BTLEd', name: 'Bachelor of Technology and Livelihood Education', dept: 'COED' },
+];
 
-export const getDepartmentSuggestions = (course: string): string[] => {
-  const normalizedCourse = course.toLowerCase().trim();
-  const suggestions: string[] = [];
-  
-  Object.entries(courseMapping).forEach(([key, dept]) => {
-    if (key.includes(normalizedCourse) && !suggestions.includes(dept)) {
-      suggestions.push(dept);
-    }
-  });
-  
-  return suggestions;
+export const mapCourseToDepartment = (courseCode: string): string | null => {
+  return courseMapping[courseCode] || null;
 };

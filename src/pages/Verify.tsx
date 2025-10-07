@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
-import { mapCourseToDepartment, getDepartmentSuggestions } from '@/utils/courseMapping';
+import { mapCourseToDepartment, availableCourses } from '@/utils/courseMapping';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getDeviceId } from '@/utils/deviceId';
 import { toast } from 'sonner';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
@@ -22,17 +23,6 @@ export default function Verify() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-
-  const handleCourseChange = (value: string) => {
-    setFormData({ ...formData, course: value });
-    if (value.length > 2) {
-      const sug = getDepartmentSuggestions(value);
-      setSuggestions(sug);
-    } else {
-      setSuggestions([]);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,15 +153,6 @@ export default function Verify() {
               </Alert>
             )}
 
-            {suggestions.length > 0 && (
-              <Alert className="mb-6 bg-primary/10 border-primary/30">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                <AlertDescription className="text-foreground">
-                  Suggested departments: {suggestions.join(', ')}
-                </AlertDescription>
-              </Alert>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
@@ -199,16 +180,24 @@ export default function Verify() {
 
               <div className="space-y-2">
                 <Label htmlFor="course">Course / Program</Label>
-                <Input
-                  id="course"
-                  type="text"
-                  placeholder="e.g., Computer Science, Psychology"
+                <Select
                   value={formData.course}
-                  onChange={(e) => handleCourseChange(e.target.value)}
+                  onValueChange={(value) => setFormData({ ...formData, course: value })}
                   required
-                />
+                >
+                  <SelectTrigger id="course">
+                    <SelectValue placeholder="Select your course/program" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableCourses.map((course) => (
+                      <SelectItem key={course.code} value={course.code}>
+                        {course.code} - {course.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-muted-foreground">
-                  Enter your full program name. System will auto-route you to the correct department.
+                  Select your course/program. System will auto-route you to the correct department.
                 </p>
               </div>
 
