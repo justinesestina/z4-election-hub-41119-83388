@@ -14,7 +14,138 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      candidates: {
+        Row: {
+          candidate_name: string
+          created_at: string | null
+          department: string
+          id: string
+          position: string
+          year_level: string | null
+        }
+        Insert: {
+          candidate_name: string
+          created_at?: string | null
+          department: string
+          id?: string
+          position: string
+          year_level?: string | null
+        }
+        Update: {
+          candidate_name?: string
+          created_at?: string | null
+          department?: string
+          id?: string
+          position?: string
+          year_level?: string | null
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          color_hex: string
+          created_at: string | null
+          icon_name: string
+          id: string
+          name: string
+          short_code: string
+        }
+        Insert: {
+          color_hex: string
+          created_at?: string | null
+          icon_name: string
+          id?: string
+          name: string
+          short_code: string
+        }
+        Update: {
+          color_hex?: string
+          created_at?: string | null
+          icon_name?: string
+          id?: string
+          name?: string
+          short_code?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verifications: {
+        Row: {
+          course: string
+          created_at: string | null
+          department: string
+          device_id: string | null
+          id: string
+          name: string
+          student_id: string
+        }
+        Insert: {
+          course: string
+          created_at?: string | null
+          department: string
+          device_id?: string | null
+          id?: string
+          name: string
+          student_id: string
+        }
+        Update: {
+          course?: string
+          created_at?: string | null
+          department?: string
+          device_id?: string | null
+          id?: string
+          name?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          candidate_name: string
+          created_at: string | null
+          department: string
+          device_id: string | null
+          id: string
+          position: string
+          student_id: string
+        }
+        Insert: {
+          candidate_name: string
+          created_at?: string | null
+          department: string
+          device_id?: string | null
+          id?: string
+          position: string
+          student_id: string
+        }
+        Update: {
+          candidate_name?: string
+          created_at?: string | null
+          department?: string
+          device_id?: string | null
+          id?: string
+          position?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +154,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "voter"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +281,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "voter"],
+    },
   },
 } as const
