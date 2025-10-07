@@ -218,11 +218,8 @@ export default function Results() {
                 transition={{ delay: 0.1 * index }}
               >
                 <Card className="p-6">
-                  <h3 className="text-xl font-bold mb-4 text-foreground flex items-center gap-2">
+                  <h3 className="text-xl font-bold mb-6 text-foreground">
                     {position}
-                    {positionCounts.length > 0 && positionCounts[0].count > 0 && (
-                      <Trophy className="h-5 w-5" style={{ color: department.color_hex }} />
-                    )}
                   </h3>
 
                   {positionCounts.length === 0 ? (
@@ -259,11 +256,11 @@ export default function Results() {
                   )}
 
                   {positionCounts.length > 0 && (
-                    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div className="mt-4 space-y-3">
                       {positionCounts.map((candidate, i) => (
                         <div 
                           key={i}
-                          className={`p-3 rounded-lg ${
+                          className={`p-4 rounded-lg flex items-center justify-between ${
                             candidate.count === maxVotes 
                               ? 'border-2' 
                               : 'bg-muted'
@@ -273,15 +270,22 @@ export default function Results() {
                             backgroundColor: `${department.color_hex}10`
                           } : {}}
                         >
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {candidate.candidate_name}
-                          </p>
-                          <p className="text-2xl font-bold" style={{ color: department.color_hex }}>
-                            {candidate.count}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {candidate.count === 1 ? 'vote' : 'votes'}
-                          </p>
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg font-bold text-muted-foreground w-8">
+                              {i + 1}.
+                            </span>
+                            <p className="text-base font-medium text-foreground">
+                              {candidate.candidate_name}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <p className="text-xl font-bold" style={{ color: department.color_hex }}>
+                              {candidate.count} {candidate.count === 1 ? 'vote' : 'votes'}
+                            </p>
+                            {candidate.count === maxVotes && (
+                              <span className="text-xl">🏆</span>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>

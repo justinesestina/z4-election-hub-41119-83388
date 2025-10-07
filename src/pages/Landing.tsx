@@ -148,6 +148,7 @@ export default function Landing() {
                 <Card 
                   className="p-6 text-center hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50"
                   style={{ borderColor: `${dept.color_hex}20` }}
+                  onClick={() => navigate(`/results/${dept.short_code}`)}
                 >
                   <div 
                     className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3"
