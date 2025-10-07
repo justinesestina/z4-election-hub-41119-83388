@@ -49,7 +49,7 @@ export const availableCourses = [
   // BUS
   { code: 'BSBA', name: 'Bachelor of Science in Business Administration', dept: 'BUS' },
   { code: 'BSEntrep', name: 'Bachelor of Science in Entrepreneurship', dept: 'BUS' },
-  { code: 'BSHRM', name: 'Bachelor of Science in Hotel and Restaurant Management', dept: 'BUS' },
+  { code: 'BSHRM', name: 'Bachelor of Science in Hotel & Restaurant Management', dept: 'BUS' },
   
   // CCS
   { code: 'BSIT', name: 'Bachelor of Science in Information Technology', dept: 'CCS' },
