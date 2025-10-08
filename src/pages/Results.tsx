@@ -257,37 +257,58 @@ export default function Results() {
 
                   {positionCounts.length > 0 && (
                     <div className="mt-4 space-y-3">
-                      {positionCounts.map((candidate, i) => (
-                        <div 
-                          key={i}
-                          className={`p-4 rounded-lg flex items-center justify-between ${
-                            candidate.count === maxVotes 
-                              ? 'border-2' 
-                              : 'bg-muted'
-                          }`}
-                          style={candidate.count === maxVotes ? { 
-                            borderColor: department.color_hex,
-                            backgroundColor: `${department.color_hex}10`
-                          } : {}}
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg font-bold text-muted-foreground w-8">
-                              {i + 1}.
-                            </span>
-                            <p className="text-base font-medium text-foreground">
-                              {candidate.candidate_name}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <p className="text-xl font-bold" style={{ color: department.color_hex }}>
-                              {candidate.count} {candidate.count === 1 ? 'vote' : 'votes'}
-                            </p>
-                            {candidate.count === maxVotes && (
-                              <span className="text-xl">🏆</span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                      {positionCounts.map((candidate, i) => {
+                        const isLeader = i === 0;
+                        const getRankEmoji = () => {
+                          if (i === 0) return '🥇';
+                          if (i === 1) return '🥈';
+                          if (i === 2) return '🥉';
+                          return '';
+                        };
+                        
+                        return (
+                          <motion.div 
+                            key={candidate.candidate_name}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                            className={`p-4 rounded-lg flex items-center justify-between transition-all duration-300 ${
+                              isLeader 
+                                ? 'border-2 shadow-lg' 
+                                : 'bg-muted hover:bg-muted/70'
+                            }`}
+                            style={isLeader ? { 
+                              borderColor: '#FFD700',
+                              backgroundColor: 'rgba(255, 215, 0, 0.15)'
+                            } : {}}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-2 w-12">
+                                <span className={`text-lg font-bold ${isLeader ? 'text-[#FFD700]' : 'text-muted-foreground'}`}>
+                                  {i + 1}.
+                                </span>
+                                {getRankEmoji() && (
+                                  <span className="text-xl">{getRankEmoji()}</span>
+                                )}
+                              </div>
+                              <p className={`text-base font-medium ${isLeader ? 'font-bold' : ''} text-foreground`}>
+                                {candidate.candidate_name}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <p 
+                                className={`text-xl font-bold ${isLeader ? 'text-2xl' : ''}`}
+                                style={{ color: isLeader ? '#FFD700' : department.color_hex }}
+                              >
+                                {candidate.count} {candidate.count === 1 ? 'vote' : 'votes'}
+                              </p>
+                              {isLeader && (
+                                <Trophy className="h-6 w-6 text-[#FFD700] animate-pulse" />
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   )}
                 </Card>
