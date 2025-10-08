@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import Verify from "./pages/Verify";
 import Vote from "./pages/Vote";
 import Results from "./pages/Results";
+import OverallWinners from "./pages/OverallWinners";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/verify" element={<Verify />} />
           <Route path="/vote/:deptCode" element={<Vote />} />
           <Route path="/results/:deptCode" element={<Results />} />
+          <Route path="/overall-winners" element={<OverallWinners />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

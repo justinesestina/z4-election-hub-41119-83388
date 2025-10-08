@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Shield, Zap, BarChart3, Smartphone, CheckCircle2 } from 'lucide-react';
+import { Shield, Zap, BarChart3, Smartphone, CheckCircle2, Trophy } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useNavigate } from 'react-router-dom';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
@@ -161,6 +161,18 @@ export default function Landing() {
                 </Card>
               </motion.div>
             ))}
+          </div>
+
+          {/* Overall Winners Button */}
+          <div className="text-center mt-8">
+            <Button
+              size="lg"
+              onClick={() => navigate('/overall-winners')}
+              className="text-base px-8 py-6 rounded-full bg-primary hover:bg-primary-dark transition-all shadow-lg hover:shadow-xl"
+            >
+              <Trophy className="mr-2 h-5 w-5" />
+              View Overall Winners Summary
+            </Button>
           </div>
         </motion.div>
       </section>
