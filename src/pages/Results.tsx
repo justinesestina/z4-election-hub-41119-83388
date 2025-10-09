@@ -9,7 +9,7 @@ import { DepartmentIcon } from '@/components/DepartmentIcon';
 import { POSITIONS, Department } from '@/types';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 
 interface VoteCount {
   candidate_name: string;
@@ -103,6 +103,36 @@ export default function Results() {
     (sum, counts) => sum + counts.reduce((s, c) => s + c.count, 0),
     0
   );
+
+  // Color palette for different positions - professional gradients
+  const positionColors: Record<string, string> = {
+    'President': '#8B5CF6',        // Purple
+    'Vice President': '#3B82F6',   // Blue
+    'Secretary': '#10B981',        // Green
+    'Treasurer': '#F59E0B',        // Amber
+    'Auditor': '#EF4444',          // Red
+    'PIO': '#EC4899',              // Pink
+    'Business Manager': '#14B8A6', // Teal
+    'Representative': '#F97316',   // Orange
+  };
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+          <p className="font-semibold text-foreground">{label}</p>
+          <p className="text-sm text-muted-foreground">
+            {payload[0].payload.position || 'Position'}
+          </p>
+          <p className="text-lg font-bold mt-1" style={{ color: payload[0].fill }}>
+            {payload[0].value} {payload[0].value === 1 ? 'vote' : 'votes'}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   if (!department) {
     return <div>Loading...</div>;
@@ -209,6 +239,13 @@ export default function Results() {
           {POSITIONS.map((position, index) => {
             const positionCounts = voteCounts[position] || [];
             const maxVotes = positionCounts[0]?.count || 0;
+            const positionColor = positionColors[position] || department.color_hex;
+
+            // Add position info to each data point for tooltip
+            const chartData = positionCounts.map(item => ({
+              ...item,
+              position: position,
+            }));
 
             return (
               <motion.div
@@ -218,36 +255,59 @@ export default function Results() {
                 transition={{ delay: 0.1 * index }}
               >
                 <Card className="p-6">
-                  <h3 className="text-xl font-bold mb-6 text-foreground">
-                    {position}
-                  </h3>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div 
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: positionColor }}
+                    />
+                    <h3 className="text-xl font-bold text-foreground">
+                      {position}
+                    </h3>
+                  </div>
 
                   {positionCounts.length === 0 ? (
                     <p className="text-muted-foreground text-center py-8">No votes yet</p>
                   ) : (
-                    <ResponsiveContainer width="100%" height={200}>
-                      <BarChart data={positionCounts} layout="horizontal">
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis type="number" className="text-muted-foreground" />
+                    <ResponsiveContainer width="100%" height={Math.max(200, positionCounts.length * 60)}>
+                      <BarChart 
+                        data={chartData} 
+                        layout="horizontal"
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <defs>
+                          <linearGradient id={`gradient-${position}`} x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor={positionColor} stopOpacity={0.8} />
+                            <stop offset="100%" stopColor={positionColor} stopOpacity={1} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid 
+                          strokeDasharray="3 3" 
+                          className="stroke-border" 
+                          opacity={0.3}
+                        />
+                        <XAxis 
+                          type="number" 
+                          className="text-muted-foreground text-xs"
+                          tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                        />
                         <YAxis 
                           type="category" 
                           dataKey="candidate_name" 
                           width={150}
                           className="text-muted-foreground text-sm"
+                          tick={{ fill: 'hsl(var(--foreground))', fontSize: 12 }}
                         />
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: 'hsl(var(--card))',
-                            border: '1px solid hsl(var(--border))',
-                            borderRadius: '8px',
-                          }}
-                          labelStyle={{ color: 'hsl(var(--foreground))' }}
-                        />
-                        <Bar dataKey="count" radius={[0, 8, 8, 0]}>
-                          {positionCounts.map((entry, index) => (
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted))', opacity: 0.3 }} />
+                        <Bar 
+                          dataKey="count" 
+                          radius={[0, 8, 8, 0]}
+                          animationDuration={800}
+                          animationEasing="ease-out"
+                        >
+                          {chartData.map((entry, idx) => (
                             <Cell 
-                              key={`cell-${index}`}
-                              fill={entry.count === maxVotes ? department.color_hex : `${department.color_hex}60`}
+                              key={`cell-${idx}`}
+                              fill={entry.count === maxVotes ? `url(#gradient-${position})` : `${positionColor}60`}
                             />
                           ))}
                         </Bar>
