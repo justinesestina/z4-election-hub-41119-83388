@@ -1,16 +1,23 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Shield, Zap, BarChart3, Smartphone, CheckCircle2, Trophy } from 'lucide-react';
+import { Shield, Zap, BarChart3, Smartphone, CheckCircle2, Trophy, LogOut } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useNavigate } from 'react-router-dom';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Department } from '@/types';
+import { toast } from 'sonner';
 
 export default function Landing() {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
 
   const { data: departments = [] } = useQuery({
     queryKey: ['departments'],
@@ -63,7 +70,18 @@ export default function Landing() {
             </div>
             <span className="text-xl font-semibold text-foreground">Campus Vote</span>
           </motion.div>
-          <DarkModeToggle />
+          <div className="flex items-center gap-2">
+            <DarkModeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="rounded-full hover:bg-destructive/10 hover:text-destructive transition-colors"
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </header>
 

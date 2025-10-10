@@ -19,7 +19,7 @@ export default function Login() {
     setIsLoading(true);
 
     // Simple credential check
-    if (username === 'VoteNet25' && password === 'VoteNet2K25') {
+    if (username === 'VoteNet25' && password === 'votenet2k25') {
       localStorage.setItem('isLoggedIn', 'true');
       toast.success('Login successful! Welcome to VoteNet.');
       setTimeout(() => {
