@@ -25,6 +25,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { VotingTutorialModal } from '@/components/VotingTutorialModal';
+
+interface Partylist {
+  id: string;
+  department: string;
+  name: string;
+  description: string | null;
+}
 
 interface LocationState {
   studentId: string;
@@ -40,8 +48,10 @@ export default function Vote() {
 
   const [currentPosition, setCurrentPosition] = useState(0);
   const [votes, setVotes] = useState<Record<string, string>>({});
+  const [selectedPartylist, setSelectedPartylist] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Fetch department info
   const { data: department } = useQuery({
@@ -74,26 +84,46 @@ export default function Vote() {
     },
   });
 
+  // Fetch partylists for this department
+  const { data: partylists = [] } = useQuery({
+    queryKey: ['partylists', deptCode],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('partylists')
+        .select('*')
+        .eq('department', deptCode)
+        .order('name');
+      
+      if (error) throw error;
+      return data as Partylist[];
+    },
+  });
+
   useEffect(() => {
     if (!state?.studentId || !state?.department) {
       navigate('/verify');
     }
   }, [state, navigate]);
 
-  const position = POSITIONS[currentPosition];
-  const positionCandidates = candidates.filter(c => c.position === position);
-  const progress = ((currentPosition + 1) / POSITIONS.length) * 100;
+  const totalSteps = POSITIONS.length + 1; // +1 for partylist
+  const position = currentPosition < POSITIONS.length ? POSITIONS[currentPosition] : null;
+  const positionCandidates = position ? candidates.filter(c => c.position === position) : [];
+  const progress = ((currentPosition + 1) / totalSteps) * 100;
+  const isPartylistStep = currentPosition === POSITIONS.length;
 
   const handleNext = () => {
-    if (!votes[position]) {
-      toast.error('Please select a candidate');
-      return;
-    }
-    
-    if (currentPosition < POSITIONS.length - 1) {
-      setCurrentPosition(currentPosition + 1);
-    } else {
+    if (isPartylistStep) {
+      if (!selectedPartylist) {
+        toast.error('Please select a partylist');
+        return;
+      }
       setShowConfirmDialog(true);
+    } else {
+      if (!votes[position!]) {
+        toast.error('Please select a candidate');
+        return;
+      }
+      setCurrentPosition(currentPosition + 1);
     }
   };
 
@@ -122,13 +152,14 @@ export default function Vote() {
         return;
       }
 
-      // Insert all votes
+      // Insert all votes with partylist
       const voteRecords = Object.entries(votes).map(([position, candidateName]) => ({
         department: deptCode!,
         position,
         candidate_name: candidateName,
         student_id: state.studentId,
         device_id: deviceId,
+        partylist_vote: selectedPartylist,
       }));
 
       const { error } = await supabase
@@ -177,7 +208,12 @@ export default function Vote() {
               <span className="text-xs text-muted-foreground">{department.name}</span>
             </div>
           </div>
-          <DarkModeToggle />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowTutorial(true)}>
+              How to Vote
+            </Button>
+            <DarkModeToggle />
+          </div>
         </div>
       </header>
 
@@ -186,7 +222,7 @@ export default function Vote() {
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-foreground">
-              Position {currentPosition + 1} of {POSITIONS.length}
+              {isPartylistStep ? 'Partylist Selection' : `Position ${currentPosition + 1} of ${POSITIONS.length}`}
             </span>
             <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
           </div>
@@ -204,38 +240,81 @@ export default function Vote() {
           className="max-w-2xl mx-auto"
         >
           <Card className="p-8">
-            <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
-              {position}
-            </h2>
+            {isPartylistStep ? (
+              <>
+                <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
+                  Select Your Partylist
+                </h2>
+                <p className="text-sm text-muted-foreground text-center mb-6">
+                  Choose the partylist that best represents your vision for {department.short_code}
+                </p>
 
-            {positionCandidates.length === 0 ? (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  No candidates available for this position.
-                </AlertDescription>
-              </Alert>
+                {partylists.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      No partylists available for this department.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <RadioGroup
+                    value={selectedPartylist}
+                    onValueChange={setSelectedPartylist}
+                    className="space-y-3"
+                  >
+                    {partylists.map((partylist) => (
+                      <div key={partylist.id} className="flex items-center space-x-3">
+                        <RadioGroupItem value={partylist.name} id={partylist.id} />
+                        <Label
+                          htmlFor={partylist.id}
+                          className="flex-1 cursor-pointer p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
+                        >
+                          <div className="font-semibold text-foreground">{partylist.name}</div>
+                          {partylist.description && (
+                            <div className="text-sm text-muted-foreground mt-1">{partylist.description}</div>
+                          )}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
+              </>
             ) : (
-              <RadioGroup
-                value={votes[position] || ''}
-                onValueChange={(value) => setVotes({ ...votes, [position]: value })}
-                className="space-y-3"
-              >
-                {positionCandidates.map((candidate) => (
-                  <div key={candidate.id} className="flex items-center space-x-3">
-                    <RadioGroupItem value={candidate.candidate_name} id={candidate.id} />
-                    <Label
-                      htmlFor={candidate.id}
-                      className="flex-1 cursor-pointer p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
-                    >
-                      <div className="font-semibold text-foreground">{candidate.candidate_name}</div>
-                      {candidate.year_level && (
-                        <div className="text-sm text-muted-foreground">{candidate.year_level}</div>
-                      )}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
+              <>
+                <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
+                  {position}
+                </h2>
+
+                {positionCandidates.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      No candidates available for this position.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <RadioGroup
+                    value={votes[position!] || ''}
+                    onValueChange={(value) => setVotes({ ...votes, [position!]: value })}
+                    className="space-y-3"
+                  >
+                    {positionCandidates.map((candidate) => (
+                      <div key={candidate.id} className="flex items-center space-x-3">
+                        <RadioGroupItem value={candidate.candidate_name} id={candidate.id} />
+                        <Label
+                          htmlFor={candidate.id}
+                          className="flex-1 cursor-pointer p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
+                        >
+                          <div className="font-semibold text-foreground">{candidate.candidate_name}</div>
+                          {candidate.year_level && (
+                            <div className="text-sm text-muted-foreground">{candidate.year_level}</div>
+                          )}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
+              </>
             )}
 
             <div className="flex justify-between mt-8">
@@ -249,11 +328,11 @@ export default function Vote() {
               </Button>
               <Button
                 onClick={handleNext}
-                disabled={!votes[position]}
+                disabled={isPartylistStep ? !selectedPartylist : !votes[position!]}
                 style={{ backgroundColor: department.color_hex }}
                 className="text-white hover:opacity-90"
               >
-                {currentPosition === POSITIONS.length - 1 ? (
+                {isPartylistStep ? (
                   <>
                     Review & Submit
                     <Check className="ml-2 h-4 w-4" />
@@ -287,6 +366,12 @@ export default function Vote() {
                 <div className="text-sm text-muted-foreground">{candidate}</div>
               </div>
             ))}
+            {selectedPartylist && (
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-sm text-foreground">Partylist</div>
+                <div className="text-sm text-muted-foreground">{selectedPartylist}</div>
+              </div>
+            )}
           </div>
 
           <AlertDialogFooter>
@@ -302,6 +387,13 @@ export default function Vote() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Tutorial Modal */}
+      <VotingTutorialModal
+        open={showTutorial}
+        onOpenChange={setShowTutorial}
+        departmentName={department.name}
+      />
 
       {/* Footer */}
       <footer className="border-t border-border py-8 mt-16">

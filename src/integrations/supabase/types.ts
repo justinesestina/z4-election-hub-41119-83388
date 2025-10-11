@@ -68,6 +68,54 @@ export type Database = {
         }
         Relationships: []
       }
+      election_status: {
+        Row: {
+          created_at: string | null
+          department: string
+          id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      partylists: {
+        Row: {
+          created_at: string | null
+          department: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -123,6 +171,7 @@ export type Database = {
           department: string
           device_id: string | null
           id: string
+          partylist_vote: string | null
           position: string
           student_id: string
         }
@@ -132,6 +181,7 @@ export type Database = {
           department: string
           device_id?: string | null
           id?: string
+          partylist_vote?: string | null
           position: string
           student_id: string
         }
@@ -141,6 +191,7 @@ export type Database = {
           department?: string
           device_id?: string | null
           id?: string
+          partylist_vote?: string | null
           position?: string
           student_id?: string
         }

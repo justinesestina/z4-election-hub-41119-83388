@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Shield, Zap, BarChart3, Smartphone, CheckCircle2, Trophy, LogOut } from 'lucide-react';
+import { Shield, Zap, BarChart3, Smartphone, CheckCircle2, Trophy, LogOut, HelpCircle } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useNavigate } from 'react-router-dom';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
@@ -9,9 +9,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Department } from '@/types';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { VotingTutorialModal } from '@/components/VotingTutorialModal';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -96,19 +99,36 @@ export default function Landing() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-light to-secondary bg-clip-text text-transparent">
             Campus Vote (VoteNet): A Department-Based Online Student Voting System
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-3 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
             Empowering fair and transparent student elections across every college department.
           </p>
-          <Button 
-            size="lg" 
-            onClick={() => navigate('/verify')}
-            className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary-dark transition-all shadow-lg hover:shadow-xl"
-          >
-            Start Voting
-            <CheckCircle2 className="ml-2 h-5 w-5" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/verify')}
+              className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary-dark transition-all shadow-lg hover:shadow-xl"
+            >
+              Start Voting
+              <CheckCircle2 className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              onClick={() => setShowTutorial(true)}
+              className="text-lg px-8 py-6 rounded-full transition-all shadow-md hover:shadow-lg"
+            >
+              <HelpCircle className="mr-2 h-5 w-5" />
+              How to Vote
+            </Button>
+          </div>
         </motion.div>
       </section>
+
+      {/* Tutorial Modal */}
+      <VotingTutorialModal
+        open={showTutorial}
+        onOpenChange={setShowTutorial}
+      />
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16 bg-muted/30 rounded-3xl mb-16">
