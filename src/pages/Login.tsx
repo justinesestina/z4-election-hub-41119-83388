@@ -18,12 +18,12 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simple credential check
+    // System entry credentials
     if (username === 'VoteNet25' && password === 'votenet2k25') {
       localStorage.setItem('isLoggedIn', 'true');
       toast.success('Login successful! Welcome to VoteNet.');
       setTimeout(() => {
-        navigate('/');
+        navigate('/auth-select');
       }, 500);
     } else {
       toast.error('Invalid username or password. Please try again.');

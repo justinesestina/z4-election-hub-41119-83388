@@ -4,6 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
+import AuthSelect from "./pages/AuthSelect";
+import Register from "./pages/Register";
+import VoterLogin from "./pages/VoterLogin";
 import Landing from "./pages/Landing";
 import Verify from "./pages/Verify";
 import Vote from "./pages/Vote";
@@ -27,6 +30,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/auth-select" element={<ProtectedRoute><AuthSelect /></ProtectedRoute>} />
+          <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+          <Route path="/voter-login" element={<ProtectedRoute><VoterLogin /></ProtectedRoute>} />
           <Route path="/" element={<ProtectedRoute><Landing /></ProtectedRoute>} />
           <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
           <Route path="/vote/:deptCode" element={<ProtectedRoute><Vote /></ProtectedRoute>} />
