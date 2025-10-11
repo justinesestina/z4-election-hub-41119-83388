@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          admin_user: string | null
+          created_at: string | null
+          details: Json | null
+          id: string
+        }
+        Insert: {
+          action: string
+          admin_user?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          admin_user?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+        }
+        Relationships: []
+      }
       candidates: {
         Row: {
           candidate_name: string
@@ -68,24 +92,75 @@ export type Database = {
         }
         Relationships: []
       }
+      election_status: {
+        Row: {
+          department: string
+          id: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          department: string
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          department?: string
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       partylists: {
         Row: {
           created_at: string
           department: string
+          description: string | null
           id: string
           name: string
         }
         Insert: {
           created_at?: string
           department: string
+          description?: string | null
           id?: string
           name: string
         }
         Update: {
           created_at?: string
           department?: string
+          description?: string | null
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      verification_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          verified: boolean | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          verified?: boolean | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          verified?: boolean | null
         }
         Relationships: []
       }
@@ -113,6 +188,39 @@ export type Database = {
           device_id?: string | null
           name?: string
           student_id?: string
+        }
+        Relationships: []
+      }
+      voters: {
+        Row: {
+          created_at: string | null
+          department: string
+          email: string
+          has_voted: boolean | null
+          id: string
+          name: string
+          student_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          email: string
+          has_voted?: boolean | null
+          id?: string
+          name: string
+          student_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          email?: string
+          has_voted?: boolean | null
+          id?: string
+          name?: string
+          student_id?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
