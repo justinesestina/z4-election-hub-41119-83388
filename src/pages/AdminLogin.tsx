@@ -5,15 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, LogIn, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 
-export default function VoterLogin() {
+export default function AdminLogin() {
   const navigate = useNavigate();
-  const [studentId, setStudentId] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -22,36 +21,16 @@ export default function VoterLogin() {
     setError('');
     setLoading(true);
 
-    try {
-      const { data: voter, error: voterError } = await supabase
-        .from('voters')
-        .select('*')
-        .eq('student_id', studentId)
-        .eq('email', email)
-        .maybeSingle();
-
-      if (voterError || !voter) {
-        setError('Invalid Student ID or Email. Please register first.');
-        setLoading(false);
-        return;
-      }
-
-      if (voter.has_voted) {
-        toast.info('You have already voted. Redirecting to results...');
-        navigate('/');
-        return;
-      }
-
-      // Store voter session
-      localStorage.setItem('voterSession', JSON.stringify(voter));
-      toast.success(`Welcome back, ${voter.name}!`);
-      navigate('/');
-    } catch (err: any) {
-      console.error('Login error:', err);
-      setError('An error occurred during login');
-    } finally {
-      setLoading(false);
+    // Simple credential check
+    if (username === 'admin25' && password === 'admin2k25') {
+      localStorage.setItem('adminLoggedIn', 'true');
+      toast.success('Admin login successful!');
+      navigate('/admin-dashboard');
+    } else {
+      setError('Invalid admin credentials');
     }
+
+    setLoading(false);
   };
 
   return (
@@ -60,7 +39,7 @@ export default function VoterLogin() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate('/auth-select')}
+          onClick={() => navigate('/')}
           className="rounded-full"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -72,8 +51,11 @@ export default function VoterLogin() {
 
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold mb-2">Voter Login</h1>
-          <p className="text-muted-foreground">Access your voting dashboard</p>
+          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <ShieldCheck className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-3xl font-bold mb-2">Admin Login</h1>
+          <p className="text-muted-foreground">Access the admin dashboard</p>
         </div>
 
         {error && (
@@ -85,40 +67,40 @@ export default function VoterLogin() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="studentId">Student ID</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="studentId"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              placeholder="2021-12345"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter admin username"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your.email@example.com"
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter admin password"
               required
             />
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In'}
-            <LogIn className="ml-2 h-4 w-4" />
+            {loading ? 'Logging in...' : 'Login as Admin'}
+            <ShieldCheck className="ml-2 h-4 w-4" />
           </Button>
 
           <Button
             type="button"
             variant="ghost"
             className="w-full"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/')}
           >
-            Need to register? Sign up
+            Back to Main
           </Button>
         </form>
       </Card>

@@ -15,9 +15,15 @@ interface Winner {
   votes: number;
 }
 
+interface PartylistResult {
+  name: string;
+  votes: number;
+}
+
 interface DepartmentWinners {
   department: Department;
   winners: Winner[];
+  partylistResults: PartylistResult[];
 }
 
 export default function OverallWinners() {
@@ -59,10 +65,10 @@ export default function OverallWinners() {
 
       if (deptError) throw deptError;
 
-      // Fetch all votes
+      // Fetch all votes with partylist
       const { data: votes, error: votesError } = await supabase
         .from('votes')
-        .select('department, position, candidate_name');
+        .select('department, position, candidate_name, partylist_vote');
 
       if (votesError) throw votesError;
 
@@ -96,9 +102,22 @@ export default function OverallWinners() {
           };
         });
 
+        // Aggregate partylist votes
+        const partylistCounts: Record<string, number> = {};
+        deptVotes.forEach((vote) => {
+          if (vote.partylist_vote) {
+            partylistCounts[vote.partylist_vote] = (partylistCounts[vote.partylist_vote] || 0) + 1;
+          }
+        });
+
+        const partylistResults: PartylistResult[] = Object.entries(partylistCounts)
+          .map(([name, votes]) => ({ name, votes }))
+          .sort((a, b) => b.votes - a.votes);
+
         return {
           department: dept as Department,
           winners,
+          partylistResults,
         };
       }) || [];
 
@@ -202,6 +221,35 @@ export default function OverallWinners() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Partylist Results */}
+                  {deptData.partylistResults.length > 0 && (
+                    <div className="mt-6 pt-4 border-t border-border">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase mb-3">Partylist Results</h3>
+                      <div className="space-y-2">
+                        {deptData.partylistResults.map((partylist, idx) => (
+                          <div
+                            key={partylist.name}
+                            className="p-3 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-muted-foreground">
+                                  {idx + 1}.
+                                </span>
+                                <p className="text-sm font-medium text-foreground">
+                                  {partylist.name}
+                                </p>
+                              </div>
+                              <span className="text-sm font-bold" style={{ color: deptData.department.color_hex }}>
+                                {partylist.votes} {partylist.votes === 1 ? 'vote' : 'votes'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* View Full Results Button */}
                   <Button

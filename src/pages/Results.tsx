@@ -16,10 +16,16 @@ interface VoteCount {
   count: number;
 }
 
+interface PartylistCount {
+  name: string;
+  count: number;
+}
+
 export default function Results() {
   const { deptCode } = useParams<{ deptCode: string }>();
   const navigate = useNavigate();
   const [voteCounts, setVoteCounts] = useState<Record<string, VoteCount[]>>({});
+  const [partylistCounts, setPartylistCounts] = useState<PartylistCount[]>([]);
 
   // Fetch department info
   const { data: department } = useQuery({
@@ -40,7 +46,7 @@ export default function Results() {
   const fetchVotes = async () => {
     const { data: votes, error } = await supabase
       .from('votes')
-      .select('position, candidate_name')
+      .select('position, candidate_name, partylist_vote')
       .eq('department', deptCode!);
 
     if (error) {
@@ -70,6 +76,20 @@ export default function Results() {
     });
 
     setVoteCounts(formattedCounts);
+
+    // Aggregate partylist votes
+    const partylistVoteCounts: Record<string, number> = {};
+    votes?.forEach((vote) => {
+      if (vote.partylist_vote) {
+        partylistVoteCounts[vote.partylist_vote] = (partylistVoteCounts[vote.partylist_vote] || 0) + 1;
+      }
+    });
+
+    const formattedPartylistCounts: PartylistCount[] = Object.entries(partylistVoteCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+
+    setPartylistCounts(formattedPartylistCounts);
   };
 
   useEffect(() => {
@@ -233,6 +253,60 @@ export default function Results() {
             </Card>
           </motion.div>
         </div>
+
+        {/* Partylist Results */}
+        {partylistCounts.length > 0 && (
+          <Card className="p-6 mb-8">
+            <h3 className="text-2xl font-bold mb-6 text-foreground">Partylist Results</h3>
+            <div className="space-y-3">
+              {partylistCounts.map((partylist, idx) => {
+                const isLeader = idx === 0;
+                return (
+                  <motion.div
+                    key={partylist.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className={`p-4 rounded-lg flex items-center justify-between transition-all duration-300 ${
+                      isLeader
+                        ? 'border-2 shadow-lg'
+                        : 'bg-muted hover:bg-muted/70'
+                    }`}
+                    style={isLeader ? {
+                      borderColor: '#FFD700',
+                      backgroundColor: 'rgba(255, 215, 0, 0.15)'
+                    } : {}}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 w-12">
+                        <span className={`text-lg font-bold ${isLeader ? 'text-[#FFD700]' : 'text-muted-foreground'}`}>
+                          {idx + 1}.
+                        </span>
+                        {idx === 0 && <span className="text-xl">🥇</span>}
+                        {idx === 1 && <span className="text-xl">🥈</span>}
+                        {idx === 2 && <span className="text-xl">🥉</span>}
+                      </div>
+                      <p className={`text-base font-medium ${isLeader ? 'font-bold' : ''} text-foreground`}>
+                        {partylist.name}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <p
+                        className={`text-xl font-bold ${isLeader ? 'text-2xl' : ''}`}
+                        style={{ color: isLeader ? '#FFD700' : department?.color_hex }}
+                      >
+                        {partylist.count} {partylist.count === 1 ? 'vote' : 'votes'}
+                      </p>
+                      {isLeader && (
+                        <Trophy className="h-6 w-6 text-[#FFD700] animate-pulse" />
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </Card>
+        )}
 
         {/* Results Charts */}
         <div className="space-y-8">

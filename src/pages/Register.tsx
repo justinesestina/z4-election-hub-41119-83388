@@ -8,8 +8,9 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Mail } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Copy, Check } from 'lucide-react';
 import { mapCourseToDepartment, availableCourses } from '@/utils/courseMapping';
+import { DarkModeToggle } from '@/components/DarkModeToggle';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,8 +23,14 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCodeInput, setShowCodeInput] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [codeExpiry, setCodeExpiry] = useState<Date | null>(null);
+  const [generatedCode, setGeneratedCode] = useState('');
+  const [verificationInput, setVerificationInput] = useState('');
+  const [attempts, setAttempts] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const generateCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,68 +60,60 @@ export default function Register() {
         .maybeSingle();
 
       if (existing) {
-        setError('You have already registered. Please use the login option.');
+        setError('You have already registered your vote.');
         setLoading(false);
         return;
       }
 
-      // Send verification code
-      const { error: functionError } = await supabase.functions.invoke('send-verification-code', {
-        body: { email: formData.email, name: formData.name },
-      });
-
-      if (functionError) throw functionError;
-
+      // Generate on-screen verification code
+      const code = generateCode();
+      setGeneratedCode(code);
       setShowCodeInput(true);
-      setCodeExpiry(new Date(Date.now() + 3 * 60 * 1000));
-      toast.success('Verification code sent to your email!');
+      setAttempts(0);
+      setVerificationInput('');
+      toast.success('Verification code generated!');
     } catch (err: any) {
-      console.error('Send code error:', err);
-      setError(err.message || 'Failed to send verification code');
+      console.error('Generation error:', err);
+      setError(err.message || 'Failed to generate verification code');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleResendCode = async () => {
-    setVerificationCode('');
-    await handleSendCode(new Event('submit') as any);
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(generatedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success('Code copied to clipboard!');
   };
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (verificationInput !== generatedCode) {
+      setAttempts(attempts + 1);
+      
+      if (attempts >= 2) {
+        setError('Maximum attempts reached. Please start over.');
+        setTimeout(() => {
+          setShowCodeInput(false);
+          setGeneratedCode('');
+          setVerificationInput('');
+          setAttempts(0);
+          setError('');
+        }, 2000);
+        return;
+      }
+      
+      setError(`Invalid code. ${2 - attempts} attempt(s) remaining.`);
+      setVerificationInput('');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Check code validity
-      const { data: codeData, error: codeError } = await supabase
-        .from('verification_codes')
-        .select('*')
-        .eq('email', formData.email)
-        .eq('code', verificationCode)
-        .eq('verified', false)
-        .maybeSingle();
-
-      if (codeError || !codeData) {
-        setError('Invalid verification code');
-        setLoading(false);
-        return;
-      }
-
-      // Check expiry
-      if (new Date(codeData.expires_at) < new Date()) {
-        setError('Code expired. Please request a new one.');
-        setLoading(false);
-        return;
-      }
-
-      // Mark code as verified
-      await supabase
-        .from('verification_codes')
-        .update({ verified: true })
-        .eq('id', codeData.id);
-
       const department = mapCourseToDepartment(formData.course);
 
       // Create voter record
@@ -130,11 +129,19 @@ export default function Register() {
 
       if (voterError) throw voterError;
 
-      toast.success('Registration successful! You can now log in.');
-      navigate('/login');
+      // Store voter session
+      localStorage.setItem('voterSession', JSON.stringify({
+        name: formData.name,
+        student_id: formData.studentId,
+        email: formData.email,
+        department: department,
+      }));
+
+      toast.success('Registration successful! Redirecting to vote...');
+      navigate('/');
     } catch (err: any) {
-      console.error('Verify code error:', err);
-      setError(err.message || 'Failed to verify code');
+      console.error('Registration error:', err);
+      setError(err.message || 'Failed to complete registration');
     } finally {
       setLoading(false);
     }
@@ -142,6 +149,20 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/20 px-4">
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/auth-select')}
+          className="rounded-full"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
+      <div className="fixed top-4 right-4 z-50">
+        <DarkModeToggle />
+      </div>
+
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold mb-2">Voter Registration</h1>
@@ -209,8 +230,7 @@ export default function Register() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Sending...' : 'Send Verification Code'}
-              <Mail className="ml-2 h-4 w-4" />
+              {loading ? 'Generating...' : 'Generate Verification Code'}
             </Button>
 
             <Button
@@ -223,42 +243,77 @@ export default function Register() {
             </Button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyCode} className="space-y-4">
-            <div className="text-center mb-4">
+          <form onSubmit={handleVerifyCode} className="space-y-6">
+            <div className="text-center space-y-4">
               <p className="text-sm text-muted-foreground">
-                Enter the 6-digit code sent to <strong>{formData.email}</strong>
+                Your verification code:
               </p>
-              {codeExpiry && (
-                <p className="text-xs text-destructive mt-2">
-                  Code expires in {Math.max(0, Math.floor((codeExpiry.getTime() - Date.now()) / 1000))} seconds
-                </p>
-              )}
+              
+              <div className="bg-primary/10 border-2 border-primary rounded-lg p-6">
+                <div className="text-4xl font-bold tracking-widest text-primary mb-4">
+                  {generatedCode}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyCode}
+                  className="w-full"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="mr-2 h-4 w-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy Code
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <p className="text-sm text-muted-foreground">
+                Please type the code above to continue
+              </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="code">Verification Code</Label>
+              <Label htmlFor="code">Enter Verification Code</Label>
               <Input
                 id="code"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
+                value={verificationInput}
+                onChange={(e) => setVerificationInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
                 maxLength={6}
+                className="text-center text-2xl tracking-widest"
                 required
               />
+              <p className="text-xs text-muted-foreground text-center">
+                Attempts remaining: {3 - attempts}
+              </p>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Verifying...' : 'Verify & Register'}
+              {loading ? 'Verifying...' : 'Verify & Continue'}
             </Button>
 
             <Button
               type="button"
               variant="outline"
               className="w-full"
-              onClick={handleResendCode}
+              onClick={() => {
+                const newCode = generateCode();
+                setGeneratedCode(newCode);
+                setVerificationInput('');
+                setAttempts(0);
+                setError('');
+                toast.info('New code generated');
+              }}
               disabled={loading}
             >
-              Resend Code
+              Generate New Code
             </Button>
           </form>
         )}

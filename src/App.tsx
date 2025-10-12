@@ -12,12 +12,21 @@ import Verify from "./pages/Verify";
 import Vote from "./pages/Vote";
 import Results from "./pages/Results";
 import OverallWinners from "./pages/OverallWinners";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+// Admin Protected Route
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+  return isAdminLoggedIn ? <>{children}</> : <Navigate to="/admin-login" replace />;
 };
 
 const queryClient = new QueryClient();
@@ -33,11 +42,14 @@ const App = () => (
           <Route path="/auth-select" element={<ProtectedRoute><AuthSelect /></ProtectedRoute>} />
           <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
           <Route path="/voter-login" element={<ProtectedRoute><VoterLogin /></ProtectedRoute>} />
-          <Route path="/" element={<ProtectedRoute><Landing /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+          <Route path="/landing" element={<ProtectedRoute><Landing /></ProtectedRoute>} />
           <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
           <Route path="/vote/:deptCode" element={<ProtectedRoute><Vote /></ProtectedRoute>} />
           <Route path="/results/:deptCode" element={<ProtectedRoute><Results /></ProtectedRoute>} />
           <Route path="/overall-winners" element={<ProtectedRoute><OverallWinners /></ProtectedRoute>} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
