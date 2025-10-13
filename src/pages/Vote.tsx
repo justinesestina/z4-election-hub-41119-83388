@@ -193,8 +193,20 @@ export default function Vote() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate('/')}
+          className="rounded-full"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div 
