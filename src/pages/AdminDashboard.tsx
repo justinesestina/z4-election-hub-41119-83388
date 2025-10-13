@@ -5,8 +5,9 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
-import { ArrowLeft, Users, Vote, AlertTriangle, Trash2 } from 'lucide-react';
+import { ArrowLeft, Users, Vote, AlertTriangle, Trash2, Play, Pause, Square, Search, Download } from 'lucide-react';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -42,6 +43,7 @@ interface Voter {
   department: string;
   has_voted: boolean;
   created_at: string;
+  verified_at?: string;
 }
 
 interface VoteRecord {
@@ -60,6 +62,8 @@ export default function AdminDashboard() {
   const [voters, setVoters] = useState<Voter[]>([]);
   const [votes, setVotes] = useState<VoteRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [votingStatus, setVotingStatus] = useState<string>('not_started');
 
   useEffect(() => {
     fetchDepartments();
@@ -68,8 +72,64 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (selectedDept) {
       fetchDepartmentData(selectedDept);
+      fetchVotingStatus(selectedDept);
     }
   }, [selectedDept]);
+
+  const fetchVotingStatus = async (deptCode: string) => {
+    const { data } = await supabase
+      .from('election_status')
+      .select('status')
+      .eq('department', deptCode)
+      .single();
+    
+    if (data) {
+      setVotingStatus(data.status || 'not_started');
+    }
+  };
+
+  const updateVotingStatus = async (status: string) => {
+    const { error } = await supabase
+      .from('election_status')
+      .upsert({ 
+        department: selectedDept, 
+        status 
+      }, { 
+        onConflict: 'department' 
+      });
+
+    if (error) {
+      toast.error('Failed to update voting status');
+      return;
+    }
+
+    setVotingStatus(status);
+    toast.success(`Voting ${status === 'active' ? 'started' : status === 'paused' ? 'paused' : 'ended'}`);
+  };
+
+  const exportVotersToCSV = () => {
+    const headers = ['Name', 'Student ID', 'Email', 'Department', 'Status', 'Registered Date'];
+    const rows = filteredVoters.map(v => [
+      v.name,
+      v.student_id,
+      v.email,
+      v.department,
+      v.has_voted ? 'Voted' : 'Not Voted',
+      new Date(v.created_at).toLocaleString()
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `voters-${selectedDept}-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    toast.success('Voters exported successfully');
+  };
 
   const fetchDepartments = async () => {
     const { data, error } = await supabase
@@ -176,6 +236,12 @@ export default function AdminDashboard() {
     return acc;
   }, {});
 
+  const filteredVoters = voters.filter(voter =>
+    voter.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    voter.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    voter.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
@@ -215,6 +281,44 @@ export default function AdminDashboard() {
                 {dept.short_code}
               </Button>
             ))}
+          </div>
+        </Card>
+
+        {/* Voting Control */}
+        <Card className="p-6 mb-6">
+          <h2 className="text-lg font-semibold mb-4">Voting Control - {selectedDept}</h2>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => updateVotingStatus('active')}
+              disabled={votingStatus === 'active'}
+              className="flex items-center gap-2"
+            >
+              <Play className="h-4 w-4" />
+              Start Voting
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => updateVotingStatus('paused')}
+              disabled={votingStatus !== 'active'}
+              className="flex items-center gap-2"
+            >
+              <Pause className="h-4 w-4" />
+              Pause
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => updateVotingStatus('ended')}
+              disabled={votingStatus === 'ended'}
+              className="flex items-center gap-2"
+            >
+              <Square className="h-4 w-4" />
+              End Voting
+            </Button>
+            <div className="ml-auto flex items-center">
+              <Badge variant={votingStatus === 'active' ? 'default' : votingStatus === 'paused' ? 'secondary' : 'outline'}>
+                {votingStatus === 'active' ? '🟢 Active' : votingStatus === 'paused' ? '⏸️ Paused' : '⏹️ Ended'}
+              </Badge>
+            </div>
           </div>
         </Card>
 
@@ -260,14 +364,36 @@ export default function AdminDashboard() {
         {/* Tabs for different views */}
         <Tabs defaultValue="voters" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="voters">Verified Voters</TabsTrigger>
+            <TabsTrigger value="voters">Voter Management</TabsTrigger>
             <TabsTrigger value="votes">Vote Counts</TabsTrigger>
             <TabsTrigger value="duplicates">Duplicate Attempts</TabsTrigger>
           </TabsList>
 
           <TabsContent value="voters" className="mt-6">
             <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Registered Voters - {selectedDept}</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Voter Management - {selectedDept}</h3>
+                <Button onClick={exportVotersToCSV} variant="outline" size="sm" className="flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </Button>
+              </div>
+              
+              <div className="mb-4 flex items-center gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name, student ID, or email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {filteredVoters.length} of {voters.length} voters
+                </div>
+              </div>
+
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
@@ -275,31 +401,35 @@ export default function AdminDashboard() {
                       <TableHead>Name</TableHead>
                       <TableHead>Student ID</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Department</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Registered</TableHead>
+                      <TableHead>Vote Time</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {voters.length === 0 ? (
+                    {filteredVoters.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground">
-                          No voters registered yet
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
+                          {searchTerm ? 'No voters match your search' : 'No voters registered yet'}
                         </TableCell>
                       </TableRow>
                     ) : (
-                      voters.map((voter) => (
+                      filteredVoters.map((voter) => (
                         <TableRow key={voter.id}>
                           <TableCell className="font-medium">{voter.name}</TableCell>
                           <TableCell>{voter.student_id}</TableCell>
                           <TableCell>{voter.email}</TableCell>
+                          <TableCell>{voter.department}</TableCell>
                           <TableCell>
                             <Badge variant={voter.has_voted ? 'default' : 'secondary'}>
-                              {voter.has_voted ? 'Voted' : 'Not Voted'}
+                              {voter.has_voted ? '🟢 Voted' : '🔴 Not Voted'}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {new Date(voter.created_at).toLocaleDateString()}
+                            {voter.has_voted && voter.verified_at 
+                              ? new Date(voter.verified_at).toLocaleString()
+                              : '-'}
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">

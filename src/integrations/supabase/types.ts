@@ -262,7 +262,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_partylist_counts: {
+        Args: { dept_code: string }
+        Returns: {
+          partylist_name: string
+          vote_count: number
+        }[]
+      }
+      get_vote_counts: {
+        Args: { dept_code: string }
+        Returns: {
+          candidate_name: string
+          pos: string
+          vote_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

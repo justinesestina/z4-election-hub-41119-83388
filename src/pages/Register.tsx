@@ -114,20 +114,38 @@ export default function Register() {
     setLoading(true);
 
     try {
+      // Verify the entered details match exactly
+      const { data: existingVoter } = await supabase
+        .from('voters')
+        .select('*')
+        .eq('student_id', formData.studentId)
+        .eq('email', formData.email)
+        .maybeSingle();
+
+      if (existingVoter) {
+        if (existingVoter.name !== formData.name) {
+          setError('Verification failed. Name does not match our records.');
+          setLoading(false);
+          return;
+        }
+      }
+
       const department = mapCourseToDepartment(formData.course);
 
-      // Create voter record
-      const { error: voterError } = await supabase
-        .from('voters')
-        .insert({
-          name: formData.name,
-          student_id: formData.studentId,
-          email: formData.email,
-          department: department!,
-          verified_at: new Date().toISOString(),
-        });
+      // Create voter record if doesn't exist
+      if (!existingVoter) {
+        const { error: voterError } = await supabase
+          .from('voters')
+          .insert({
+            name: formData.name,
+            student_id: formData.studentId,
+            email: formData.email,
+            department: department!,
+            verified_at: new Date().toISOString(),
+          });
 
-      if (voterError) throw voterError;
+        if (voterError) throw voterError;
+      }
 
       // Store voter session
       localStorage.setItem('voterSession', JSON.stringify({
