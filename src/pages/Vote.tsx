@@ -414,7 +414,7 @@ export default function Vote() {
             Secure • Transparent • Democratic
           </p>
           <p className="text-xs text-muted-foreground mt-3 italic">
-            This website was created by Justine Ragaza, a student of the College of Computer Studies.
+            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani.
           </p>
         </div>
       </footer>

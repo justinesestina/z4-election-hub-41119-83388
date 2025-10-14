@@ -1,79 +1,72 @@
-// Course to Department mapping
+// Course to Department mapping for VoteNet25
 export const courseMapping: Record<string, string> = {
-  // ARCH - Architecture & Design
-  'BS Architecture': 'ARCH',
-  'BS Interior Design': 'ARCH',
-  
-  // ARTS - Arts & Sciences
-  'BA Communication': 'ARTS',
-  'BA Political Science': 'ARTS',
-  'BS Psychology (Non-Health)': 'ARTS',
-  
-  // BUS - Business Administration
-  'BS Business Administration': 'BUS',
-  'BS Accountancy': 'BUS',
-  'BS Management Accounting': 'BUS',
-  
   // CCS - College of Computer Studies
-  'BS Information Technology': 'CCS',
-  'BS Computer Science': 'CCS',
-  'BS Information Systems': 'CCS',
+  'BSIT': 'CCS',
+  'BSCS': 'CCS',
+  'BSIS': 'CCS',
   
-  // EDUC - Education Department
-  'BSEd English': 'EDUC',
-  'BSEd Mathematics': 'EDUC',
-  'BEEd General Education': 'EDUC',
+  // BSED - Bachelor of Secondary Education
+  'BSEd': 'BSED',
+  'BSEd English': 'BSED',
+  'BSEd Math': 'BSED',
+  'BSEd Science': 'BSED',
   
-  // ENG - Engineering Department
-  'BS Civil Engineering': 'ENG',
-  'BS Electrical Engineering': 'ENG',
-  'BS Mechanical Engineering': 'ENG',
+  // BEED - Bachelor of Elementary Education
+  'BEEd': 'BEED',
   
-  // NURS - Nursing / Health Sciences
-  'BS Nursing': 'NURS',
-  'BS Medical Technology': 'NURS',
+  // BSBA - Business Administration
+  'BSBA': 'BSBA',
+  'BSA': 'BSBA',
+  'BSEntrep': 'BSBA',
+  'BSMktg': 'BSBA',
   
-  // PSYCH - Psychology Department
-  'BS Psychology': 'PSYCH',
+  // BSIT - Information Technology (Different from CCS)
+  'BS IT': 'BSIT',
+  
+  // BSCRIM - Criminology
+  'BS Criminology': 'BSCRIM',
+  'BSCRIM': 'BSCRIM',
+  
+  // BSHM - Hospitality Management
+  'BSHM': 'BSHM',
+  
+  // BSTM - Tourism Management
+  'BSTM': 'BSTM',
 };
 
-// Available courses with full names
+// Available courses grouped by department
 export const availableCourses = [
-  // ARCH - Architecture & Design
-  { code: 'BS Architecture', name: 'Architecture', dept: 'ARCH' },
-  { code: 'BS Interior Design', name: 'Interior Design', dept: 'ARCH' },
-  
-  // ARTS - Arts & Sciences
-  { code: 'BA Communication', name: 'Communication', dept: 'ARTS' },
-  { code: 'BA Political Science', name: 'Political Science', dept: 'ARTS' },
-  { code: 'BS Psychology (Non-Health)', name: 'Psychology (Non-Health)', dept: 'ARTS' },
-  
-  // BUS - Business Administration
-  { code: 'BS Business Administration', name: 'Business Administration (Marketing/HR/Finance)', dept: 'BUS' },
-  { code: 'BS Accountancy', name: 'Accountancy', dept: 'BUS' },
-  { code: 'BS Management Accounting', name: 'Management Accounting', dept: 'BUS' },
-  
   // CCS - College of Computer Studies
-  { code: 'BS Information Technology', name: 'Information Technology', dept: 'CCS' },
-  { code: 'BS Computer Science', name: 'Computer Science', dept: 'CCS' },
-  { code: 'BS Information Systems', name: 'Information Systems', dept: 'CCS' },
+  { code: 'BSIT', name: 'Information Technology', dept: 'CCS' },
+  { code: 'BSCS', name: 'Computer Science', dept: 'CCS' },
+  { code: 'BSIS', name: 'Information Systems', dept: 'CCS' },
   
-  // EDUC - Education Department
-  { code: 'BSEd English', name: 'Secondary Education - English', dept: 'EDUC' },
-  { code: 'BSEd Mathematics', name: 'Secondary Education - Mathematics', dept: 'EDUC' },
-  { code: 'BEEd General Education', name: 'Elementary Education - General', dept: 'EDUC' },
+  // BSED - Bachelor of Secondary Education
+  { code: 'BSEd', name: 'Secondary Education', dept: 'BSED' },
+  { code: 'BSEd English', name: 'Secondary Education - English', dept: 'BSED' },
+  { code: 'BSEd Math', name: 'Secondary Education - Mathematics', dept: 'BSED' },
+  { code: 'BSEd Science', name: 'Secondary Education - Science', dept: 'BSED' },
   
-  // ENG - Engineering Department
-  { code: 'BS Civil Engineering', name: 'Civil Engineering', dept: 'ENG' },
-  { code: 'BS Electrical Engineering', name: 'Electrical Engineering', dept: 'ENG' },
-  { code: 'BS Mechanical Engineering', name: 'Mechanical Engineering', dept: 'ENG' },
+  // BEED - Bachelor of Elementary Education
+  { code: 'BEEd', name: 'Elementary Education', dept: 'BEED' },
   
-  // NURS - Nursing / Health Sciences
-  { code: 'BS Nursing', name: 'Nursing', dept: 'NURS' },
-  { code: 'BS Medical Technology', name: 'Medical Technology', dept: 'NURS' },
+  // BSBA - Business Administration
+  { code: 'BSBA', name: 'Business Administration', dept: 'BSBA' },
+  { code: 'BSA', name: 'Accountancy', dept: 'BSBA' },
+  { code: 'BSEntrep', name: 'Entrepreneurship', dept: 'BSBA' },
+  { code: 'BSMktg', name: 'Marketing', dept: 'BSBA' },
   
-  // PSYCH - Psychology Department
-  { code: 'BS Psychology', name: 'Psychology', dept: 'PSYCH' },
+  // BSIT - Information Technology (Separate Dept)
+  { code: 'BS IT', name: 'Information Technology', dept: 'BSIT' },
+  
+  // BSCRIM - Criminology
+  { code: 'BS Criminology', name: 'Criminology', dept: 'BSCRIM' },
+  
+  // BSHM - Hospitality Management
+  { code: 'BSHM', name: 'Hospitality Management', dept: 'BSHM' },
+  
+  // BSTM - Tourism Management
+  { code: 'BSTM', name: 'Tourism Management', dept: 'BSTM' },
 ];
 
 export const mapCourseToDepartment = (courseCode: string): string | null => {

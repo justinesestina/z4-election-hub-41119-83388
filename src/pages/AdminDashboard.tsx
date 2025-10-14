@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { CandidateManager } from '@/components/CandidateManager';
 
 interface Department {
   id: string;
@@ -363,11 +364,22 @@ export default function AdminDashboard() {
 
         {/* Tabs for different views */}
         <Tabs defaultValue="voters" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="voters">Voter Management</TabsTrigger>
+            <TabsTrigger value="candidates">Candidates & Partylists</TabsTrigger>
             <TabsTrigger value="votes">Vote Counts</TabsTrigger>
             <TabsTrigger value="duplicates">Duplicate Attempts</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="candidates" className="mt-6">
+            {selectedDept ? (
+              <CandidateManager department={selectedDept} />
+            ) : (
+              <Card className="p-6">
+                <p className="text-center text-muted-foreground">Please select a department first</p>
+              </Card>
+            )}
+          </TabsContent>
 
           <TabsContent value="voters" className="mt-6">
             <Card className="p-6">
