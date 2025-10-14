@@ -51,36 +51,40 @@ export default function Verify() {
       // Get device ID
       const deviceId = await getDeviceId();
 
-      // Check if student has already verified for this department
+      // Check if student has already registered/voted in this department
       const { data: existing } = await supabase
-        .from('verifications')
+        .from('voters')
         .select('*')
         .eq('student_id', formData.studentId)
         .eq('department', department)
         .maybeSingle();
 
       if (existing) {
-        // Student already verified, navigate to voting
-        toast.success(`Welcome back, ${formData.name}!`);
-        navigate(`/vote/${department}`, {
-          state: {
-            studentId: formData.studentId,
-            name: formData.name,
-            department,
-          },
-        });
+        // Student already registered
+        if (existing.has_voted) {
+          toast.info(`You have already voted in ${department}`);
+          navigate(`/results/${department}`);
+        } else {
+          toast.success(`Welcome back, ${formData.name}!`);
+          navigate(`/vote/${department}`, {
+            state: {
+              studentId: formData.studentId,
+              name: formData.name,
+              department,
+            },
+          });
+        }
         return;
       }
 
-      // Insert verification record
+      // Create voter record
       const { error: insertError } = await supabase
-        .from('verifications')
+        .from('voters')
         .insert({
           student_id: formData.studentId,
           name: formData.name,
-          course: formData.course,
+          email: `${formData.studentId}@temp.edu`, // Temp email
           department,
-          device_id: deviceId,
         });
 
       if (insertError) {
@@ -225,7 +229,7 @@ export default function Verify() {
             Secure • Transparent • Democratic
           </p>
           <p className="text-xs text-muted-foreground mt-3 italic">
-            This website was created by Justine Ragaza, a student of the College of Computer Studies.
+            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani — students of the College of Computer Studies.
           </p>
         </div>
       </footer>

@@ -152,14 +152,14 @@ export default function Vote() {
         return;
       }
 
-      // Insert all votes with partylist
-      const voteRecords = Object.entries(votes).map(([position, candidateName]) => ({
+      // Insert all votes - only add partylist to the first vote to avoid duplicate counting
+      const voteRecords = Object.entries(votes).map(([position, candidateName], index) => ({
         department: deptCode!,
         position,
         candidate_name: candidateName,
         student_id: state.studentId,
         device_id: deviceId,
-        partylist_vote: selectedPartylist,
+        partylist_vote: index === 0 ? selectedPartylist : null, // Only add to first record
       }));
 
       const { error } = await supabase
@@ -176,6 +176,13 @@ export default function Vote() {
         setSubmitting(false);
         return;
       }
+
+      // Update voter status to has_voted = true
+      await supabase
+        .from('voters')
+        .update({ has_voted: true, verified_at: new Date().toISOString() })
+        .eq('student_id', state.studentId)
+        .eq('department', deptCode!);
 
       toast.success('Your votes have been recorded!');
       navigate(`/results/${deptCode}`);
@@ -414,7 +421,7 @@ export default function Vote() {
             Secure • Transparent • Democratic
           </p>
           <p className="text-xs text-muted-foreground mt-3 italic">
-            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani.
+            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani — students of the College of Computer Studies.
           </p>
         </div>
       </footer>

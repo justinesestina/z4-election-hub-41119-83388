@@ -14,7 +14,168 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      candidates: {
+        Row: {
+          candidate_name: string
+          created_at: string
+          department: string
+          id: string
+          position: string
+        }
+        Insert: {
+          candidate_name: string
+          created_at?: string
+          department: string
+          id?: string
+          position: string
+        }
+        Update: {
+          candidate_name?: string
+          created_at?: string
+          department?: string
+          id?: string
+          position?: string
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          color_hex: string
+          created_at: string
+          icon_name: string
+          id: string
+          name: string
+          short_code: string
+        }
+        Insert: {
+          color_hex: string
+          created_at?: string
+          icon_name: string
+          id?: string
+          name: string
+          short_code: string
+        }
+        Update: {
+          color_hex?: string
+          created_at?: string
+          icon_name?: string
+          id?: string
+          name?: string
+          short_code?: string
+        }
+        Relationships: []
+      }
+      election_status: {
+        Row: {
+          created_at: string
+          department: string
+          id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      partylists: {
+        Row: {
+          created_at: string
+          department: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      voters: {
+        Row: {
+          created_at: string
+          department: string
+          email: string
+          has_voted: boolean
+          id: string
+          name: string
+          student_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          email: string
+          has_voted?: boolean
+          id?: string
+          name: string
+          student_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          email?: string
+          has_voted?: boolean
+          id?: string
+          name?: string
+          student_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          candidate_name: string
+          created_at: string
+          department: string
+          id: string
+          partylist_vote: string | null
+          position: string
+          student_id: string
+        }
+        Insert: {
+          candidate_name: string
+          created_at?: string
+          department: string
+          id?: string
+          partylist_vote?: string | null
+          position: string
+          student_id: string
+        }
+        Update: {
+          candidate_name?: string
+          created_at?: string
+          department?: string
+          id?: string
+          partylist_vote?: string | null
+          position?: string
+          student_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

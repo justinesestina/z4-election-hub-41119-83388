@@ -259,6 +259,18 @@ export default function Register() {
             >
               Already registered? Log in
             </Button>
+
+            <div className="pt-4 border-t border-border">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => navigate('/admin-login')}
+              >
+                Admin Login
+              </Button>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleVerifyCode} className="space-y-6">

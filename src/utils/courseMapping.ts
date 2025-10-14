@@ -5,33 +5,47 @@ export const courseMapping: Record<string, string> = {
   'BSCS': 'CCS',
   'BSIS': 'CCS',
   
-  // BSED - Bachelor of Secondary Education
-  'BSEd': 'BSED',
-  'BSEd English': 'BSED',
-  'BSEd Math': 'BSED',
-  'BSEd Science': 'BSED',
+  // Nursing
+  'BS Nursing': 'NURSING',
   
-  // BEED - Bachelor of Elementary Education
-  'BEEd': 'BEED',
+  // Psychology
+  'BS Psychology': 'PSYCHOLOGY',
   
-  // BSBA - Business Administration
-  'BSBA': 'BSBA',
-  'BSA': 'BSBA',
-  'BSEntrep': 'BSBA',
-  'BSMktg': 'BSBA',
+  // Engineering
+  'BSME': 'ENGINEERING',
+  'BSCpE': 'ENGINEERING',
+  'BSEE': 'ENGINEERING',
+  'BSCE': 'ENGINEERING',
   
-  // BSIT - Information Technology (Different from CCS)
-  'BS IT': 'BSIT',
+  // Arts & Sciences
+  'AB English': 'CAS',
+  'AB Communication': 'CAS',
+  'BS Biology': 'CAS',
+  'BS Math': 'CAS',
   
-  // BSCRIM - Criminology
-  'BS Criminology': 'BSCRIM',
-  'BSCRIM': 'BSCRIM',
+  // Business Administration
+  'BSBA': 'CBA',
+  'BSA': 'CBA',
+  'BSEntrep': 'CBA',
+  'BSMktg': 'CBA',
   
-  // BSHM - Hospitality Management
-  'BSHM': 'BSHM',
+  // Tourism and Hospitality
+  'BSHM': 'CTHM',
+  'BSTM': 'CTHM',
   
-  // BSTM - Tourism Management
-  'BSTM': 'BSTM',
+  // Criminology
+  'BS Criminology': 'CRIMINOLOGY',
+  'BSCRIM': 'CRIMINOLOGY',
+  
+  // Education
+  'BEEd': 'EDUCATION',
+  'BSEd': 'EDUCATION',
+  'BPEd': 'EDUCATION',
+  
+  // Agriculture
+  'BS Agriculture': 'AGRICULTURE',
+  'Agribusiness': 'AGRICULTURE',
+  'AgriTech': 'AGRICULTURE',
 };
 
 // Available courses grouped by department
@@ -41,32 +55,46 @@ export const availableCourses = [
   { code: 'BSCS', name: 'Computer Science', dept: 'CCS' },
   { code: 'BSIS', name: 'Information Systems', dept: 'CCS' },
   
-  // BSED - Bachelor of Secondary Education
-  { code: 'BSEd', name: 'Secondary Education', dept: 'BSED' },
-  { code: 'BSEd English', name: 'Secondary Education - English', dept: 'BSED' },
-  { code: 'BSEd Math', name: 'Secondary Education - Mathematics', dept: 'BSED' },
-  { code: 'BSEd Science', name: 'Secondary Education - Science', dept: 'BSED' },
+  // Nursing
+  { code: 'BS Nursing', name: 'Nursing', dept: 'NURSING' },
   
-  // BEED - Bachelor of Elementary Education
-  { code: 'BEEd', name: 'Elementary Education', dept: 'BEED' },
+  // Psychology
+  { code: 'BS Psychology', name: 'Psychology', dept: 'PSYCHOLOGY' },
   
-  // BSBA - Business Administration
-  { code: 'BSBA', name: 'Business Administration', dept: 'BSBA' },
-  { code: 'BSA', name: 'Accountancy', dept: 'BSBA' },
-  { code: 'BSEntrep', name: 'Entrepreneurship', dept: 'BSBA' },
-  { code: 'BSMktg', name: 'Marketing', dept: 'BSBA' },
+  // Engineering
+  { code: 'BSME', name: 'Mechanical Engineering', dept: 'ENGINEERING' },
+  { code: 'BSCpE', name: 'Computer Engineering', dept: 'ENGINEERING' },
+  { code: 'BSEE', name: 'Electrical Engineering', dept: 'ENGINEERING' },
+  { code: 'BSCE', name: 'Civil Engineering', dept: 'ENGINEERING' },
   
-  // BSIT - Information Technology (Separate Dept)
-  { code: 'BS IT', name: 'Information Technology', dept: 'BSIT' },
+  // Arts & Sciences
+  { code: 'AB English', name: 'English', dept: 'CAS' },
+  { code: 'AB Communication', name: 'Communication', dept: 'CAS' },
+  { code: 'BS Biology', name: 'Biology', dept: 'CAS' },
+  { code: 'BS Math', name: 'Mathematics', dept: 'CAS' },
   
-  // BSCRIM - Criminology
-  { code: 'BS Criminology', name: 'Criminology', dept: 'BSCRIM' },
+  // Business Administration
+  { code: 'BSBA', name: 'Business Administration', dept: 'CBA' },
+  { code: 'BSA', name: 'Accountancy', dept: 'CBA' },
+  { code: 'BSEntrep', name: 'Entrepreneurship', dept: 'CBA' },
+  { code: 'BSMktg', name: 'Marketing', dept: 'CBA' },
   
-  // BSHM - Hospitality Management
-  { code: 'BSHM', name: 'Hospitality Management', dept: 'BSHM' },
+  // Tourism and Hospitality
+  { code: 'BSHM', name: 'Hospitality Management', dept: 'CTHM' },
+  { code: 'BSTM', name: 'Tourism Management', dept: 'CTHM' },
   
-  // BSTM - Tourism Management
-  { code: 'BSTM', name: 'Tourism Management', dept: 'BSTM' },
+  // Criminology
+  { code: 'BS Criminology', name: 'Criminology', dept: 'CRIMINOLOGY' },
+  
+  // Education
+  { code: 'BEEd', name: 'Elementary Education', dept: 'EDUCATION' },
+  { code: 'BSEd', name: 'Secondary Education', dept: 'EDUCATION' },
+  { code: 'BPEd', name: 'Physical Education', dept: 'EDUCATION' },
+  
+  // Agriculture
+  { code: 'BS Agriculture', name: 'Agriculture', dept: 'AGRICULTURE' },
+  { code: 'Agribusiness', name: 'Agribusiness', dept: 'AGRICULTURE' },
+  { code: 'AgriTech', name: 'Agricultural Technology', dept: 'AGRICULTURE' },
 ];
 
 export const mapCourseToDepartment = (courseCode: string): string | null => {

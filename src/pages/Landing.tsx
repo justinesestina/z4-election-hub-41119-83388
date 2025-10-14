@@ -234,7 +234,7 @@ export default function Landing() {
             Secure • Transparent • Democratic
           </p>
           <p className="text-xs text-muted-foreground mt-3 italic">
-            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani.
+            This website was created by Justine Ragaza, Justine Rae Ginga, and Jhon Zenn Godani — students of the College of Computer Studies.
           </p>
         </div>
       </footer>
