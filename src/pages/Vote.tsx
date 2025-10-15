@@ -10,9 +10,11 @@ import { ArrowLeft, ArrowRight, Check, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
-import { POSITIONS, Candidate, Department } from '@/types';
+import { Candidate, Department } from '@/types';
 import { getDeviceId } from '@/utils/deviceId';
 import { toast } from 'sonner';
+import { getPositionsForDepartment } from '@/utils/departmentPositions';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -48,10 +50,12 @@ export default function Vote() {
 
   const [currentPosition, setCurrentPosition] = useState(0);
   const [votes, setVotes] = useState<Record<string, string>>({});
-  const [selectedPartylist, setSelectedPartylist] = useState('');
+  const [selectedPartylists, setSelectedPartylists] = useState<string[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  
+  const positions = deptCode ? getPositionsForDepartment(deptCode) : [];
 
   // Fetch department info
   const { data: department } = useQuery({
@@ -105,16 +109,16 @@ export default function Vote() {
     }
   }, [state, navigate]);
 
-  const totalSteps = POSITIONS.length + 1; // +1 for partylist
-  const position = currentPosition < POSITIONS.length ? POSITIONS[currentPosition] : null;
+  const totalSteps = positions.length + 1; // +1 for partylist
+  const position = currentPosition < positions.length ? positions[currentPosition] : null;
   const positionCandidates = position ? candidates.filter(c => c.position === position) : [];
   const progress = ((currentPosition + 1) / totalSteps) * 100;
-  const isPartylistStep = currentPosition === POSITIONS.length;
+  const isPartylistStep = currentPosition === positions.length;
 
   const handleNext = () => {
     if (isPartylistStep) {
-      if (!selectedPartylist) {
-        toast.error('Please select a partylist');
+      if (selectedPartylists.length === 0) {
+        toast.error('Please select at least one partylist (maximum 2)');
         return;
       }
       setShowConfirmDialog(true);
@@ -124,6 +128,18 @@ export default function Vote() {
         return;
       }
       setCurrentPosition(currentPosition + 1);
+    }
+  };
+
+  const togglePartylist = (partylistName: string) => {
+    if (selectedPartylists.includes(partylistName)) {
+      setSelectedPartylists(selectedPartylists.filter(p => p !== partylistName));
+    } else {
+      if (selectedPartylists.length < 2) {
+        setSelectedPartylists([...selectedPartylists, partylistName]);
+      } else {
+        toast.error('You can only select up to 2 partylists');
+      }
     }
   };
 
@@ -152,15 +168,27 @@ export default function Vote() {
         return;
       }
 
-      // Insert all votes - only add partylist to the first vote to avoid duplicate counting
-      const voteRecords = Object.entries(votes).map(([position, candidateName], index) => ({
+      // Insert all votes
+      const voteRecords = Object.entries(votes).map(([position, candidateName]) => ({
         department: deptCode!,
         position,
         candidate_name: candidateName,
         student_id: state.studentId,
         device_id: deviceId,
-        partylist_vote: index === 0 ? selectedPartylist : null, // Only add to first record
+        partylist_vote: null,
       }));
+
+      // Add separate vote records for each selected partylist
+      selectedPartylists.forEach(partylist => {
+        voteRecords.push({
+          department: deptCode!,
+          position: 'Partylist',
+          candidate_name: 'Partylist Vote',
+          student_id: state.studentId,
+          device_id: deviceId,
+          partylist_vote: partylist,
+        });
+      });
 
       const { error } = await supabase
         .from('votes')
@@ -241,7 +269,7 @@ export default function Vote() {
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium text-foreground">
-              {isPartylistStep ? 'Partylist Selection' : `Position ${currentPosition + 1} of ${POSITIONS.length}`}
+              {isPartylistStep ? 'Partylist Selection' : `Position ${currentPosition + 1} of ${positions.length}`}
             </span>
             <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
           </div>
@@ -262,10 +290,10 @@ export default function Vote() {
             {isPartylistStep ? (
               <>
                 <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
-                  Select Your Partylist
+                  Select Your Partylists
                 </h2>
                 <p className="text-sm text-muted-foreground text-center mb-6">
-                  Choose the partylist that best represents your vision for {department.short_code}
+                  Choose up to 2 partylists that best represent your vision for {department.short_code}
                 </p>
 
                 {partylists.length === 0 ? (
@@ -276,14 +304,14 @@ export default function Vote() {
                     </AlertDescription>
                   </Alert>
                 ) : (
-                  <RadioGroup
-                    value={selectedPartylist}
-                    onValueChange={setSelectedPartylist}
-                    className="space-y-3"
-                  >
+                  <div className="space-y-3">
                     {partylists.map((partylist) => (
                       <div key={partylist.id} className="flex items-center space-x-3">
-                        <RadioGroupItem value={partylist.name} id={partylist.id} />
+                        <Checkbox 
+                          id={partylist.id} 
+                          checked={selectedPartylists.includes(partylist.name)}
+                          onCheckedChange={() => togglePartylist(partylist.name)}
+                        />
                         <Label
                           htmlFor={partylist.id}
                           className="flex-1 cursor-pointer p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
@@ -295,7 +323,10 @@ export default function Vote() {
                         </Label>
                       </div>
                     ))}
-                  </RadioGroup>
+                    <div className="text-sm text-muted-foreground text-center mt-4">
+                      Selected: {selectedPartylists.length} / 2
+                    </div>
+                  </div>
                 )}
               </>
             ) : (
@@ -347,7 +378,7 @@ export default function Vote() {
               </Button>
               <Button
                 onClick={handleNext}
-                disabled={isPartylistStep ? !selectedPartylist : !votes[position!]}
+                disabled={isPartylistStep ? selectedPartylists.length === 0 : !votes[position!]}
                 style={{ backgroundColor: department.color_hex }}
                 className="text-white hover:opacity-90"
               >
@@ -385,10 +416,10 @@ export default function Vote() {
                 <div className="text-sm text-muted-foreground">{candidate}</div>
               </div>
             ))}
-            {selectedPartylist && (
+            {selectedPartylists.length > 0 && (
               <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-sm text-foreground">Partylist</div>
-                <div className="text-sm text-muted-foreground">{selectedPartylist}</div>
+                <div className="font-medium text-sm text-foreground">Partylists</div>
+                <div className="text-sm text-muted-foreground">{selectedPartylists.join(', ')}</div>
               </div>
             )}
           </div>
