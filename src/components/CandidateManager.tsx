@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
-import { POSITIONS } from '@/types';
+import { getPositionsForDepartment } from '@/utils/departmentPositions';
 
 interface Candidate {
   id: string;
@@ -213,7 +213,7 @@ export function CandidateManager({ department }: CandidateManagerProps) {
                 <SelectValue placeholder="Select position" />
               </SelectTrigger>
               <SelectContent>
-                {POSITIONS.map((pos) => (
+                {getPositionsForDepartment(department).map((pos) => (
                   <SelectItem key={pos} value={pos}>{pos}</SelectItem>
                 ))}
               </SelectContent>
