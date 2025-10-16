@@ -174,7 +174,6 @@ export default function Vote() {
         position,
         candidate_name: candidateName,
         student_id: state.studentId,
-        device_id: deviceId,
         partylist_vote: null,
       }));
 
@@ -185,7 +184,6 @@ export default function Vote() {
           position: 'Partylist',
           candidate_name: 'Partylist Vote',
           student_id: state.studentId,
-          device_id: deviceId,
           partylist_vote: partylist,
         });
       });
