@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
-import { ArrowLeft, Users, Vote, AlertTriangle, Trash2, Play, Pause, Square, Search, Download } from 'lucide-react';
+import { ArrowLeft, Users, Vote, AlertTriangle, Trash2, Play, Pause, Square, Search, Download, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import {
@@ -151,6 +151,12 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success('Logged out successfully');
+    navigate('/admin-login');
+  };
+
   const fetchDepartmentData = async (deptCode: string) => {
     // Fetch voters
     const { data: votersData, error: votersError } = await supabase
@@ -251,33 +257,44 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate('/')}
-              className="rounded-full"
+              className="rounded-full h-8 w-8 sm:h-10 sm:w-10"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <h1 className="text-xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-base sm:text-xl font-bold">Admin Dashboard</h1>
           </div>
-          <DarkModeToggle />
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              className="rounded-full h-8 w-8 sm:h-10 sm:w-10"
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
+            <DarkModeToggle />
+          </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Department Selection */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Select Department</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Select Department</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
             {departments.map((dept) => (
               <Button
                 key={dept.id}
                 variant={selectedDept === dept.short_code ? 'default' : 'outline'}
                 onClick={() => setSelectedDept(dept.short_code)}
-                className="w-full"
+                className="w-full text-xs sm:text-sm"
               >
                 {dept.short_code}
               </Button>
@@ -286,37 +303,42 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Voting Control */}
-        <Card className="p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Voting Control - {selectedDept}</h2>
-          <div className="flex gap-3">
+        <Card className="p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Voting Control - {selectedDept}</h2>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button
               onClick={() => updateVotingStatus('active')}
               disabled={votingStatus === 'active'}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-xs sm:text-sm"
+              size="sm"
             >
-              <Play className="h-4 w-4" />
-              Start Voting
+              <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Start Voting</span>
+              <span className="sm:hidden">Start</span>
             </Button>
             <Button
               variant="outline"
               onClick={() => updateVotingStatus('paused')}
               disabled={votingStatus !== 'active'}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-xs sm:text-sm"
+              size="sm"
             >
-              <Pause className="h-4 w-4" />
+              <Pause className="h-3 w-3 sm:h-4 sm:w-4" />
               Pause
             </Button>
             <Button
               variant="destructive"
               onClick={() => updateVotingStatus('ended')}
               disabled={votingStatus === 'ended'}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-xs sm:text-sm"
+              size="sm"
             >
-              <Square className="h-4 w-4" />
-              End Voting
+              <Square className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">End Voting</span>
+              <span className="sm:hidden">End</span>
             </Button>
-            <div className="ml-auto flex items-center">
-              <Badge variant={votingStatus === 'active' ? 'default' : votingStatus === 'paused' ? 'secondary' : 'outline'}>
+            <div className="sm:ml-auto flex items-center justify-center sm:justify-start">
+              <Badge variant={votingStatus === 'active' ? 'default' : votingStatus === 'paused' ? 'secondary' : 'outline'} className="text-xs">
                 {votingStatus === 'active' ? '🟢 Active' : votingStatus === 'paused' ? '⏸️ Paused' : '⏹️ Ended'}
               </Badge>
             </div>
@@ -324,39 +346,39 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <Card className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="h-6 w-6 text-primary" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <Card className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Voters</p>
-                <p className="text-2xl font-bold">{voters.length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Total Voters</p>
+                <p className="text-xl sm:text-2xl font-bold">{voters.length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center">
-                <Vote className="h-6 w-6 text-success" />
+          <Card className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                <Vote className="h-5 w-5 sm:h-6 sm:w-6 text-success" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Voted</p>
-                <p className="text-2xl font-bold">{voters.filter(v => v.has_voted).length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Voted</p>
+                <p className="text-xl sm:text-2xl font-bold">{voters.filter(v => v.has_voted).length}</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
+          <Card className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-destructive" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Not Voted</p>
-                <p className="text-2xl font-bold">{voters.filter(v => !v.has_voted).length}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Not Voted</p>
+                <p className="text-xl sm:text-2xl font-bold">{voters.filter(v => !v.has_voted).length}</p>
               </div>
             </div>
           </Card>
@@ -364,11 +386,23 @@ export default function AdminDashboard() {
 
         {/* Tabs for different views */}
         <Tabs defaultValue="voters" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="voters">Voter Management</TabsTrigger>
-            <TabsTrigger value="candidates">Candidates & Partylists</TabsTrigger>
-            <TabsTrigger value="votes">Vote Counts</TabsTrigger>
-            <TabsTrigger value="duplicates">Duplicate Attempts</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+            <TabsTrigger value="voters" className="text-xs sm:text-sm py-2 sm:py-2.5">
+              <span className="hidden sm:inline">Voter Management</span>
+              <span className="sm:hidden">Voters</span>
+            </TabsTrigger>
+            <TabsTrigger value="candidates" className="text-xs sm:text-sm py-2 sm:py-2.5">
+              <span className="hidden sm:inline">Candidates & Partylists</span>
+              <span className="sm:hidden">Candidates</span>
+            </TabsTrigger>
+            <TabsTrigger value="votes" className="text-xs sm:text-sm py-2 sm:py-2.5">
+              <span className="hidden sm:inline">Vote Counts</span>
+              <span className="sm:hidden">Votes</span>
+            </TabsTrigger>
+            <TabsTrigger value="duplicates" className="text-xs sm:text-sm py-2 sm:py-2.5">
+              <span className="hidden sm:inline">Duplicate Attempts</span>
+              <span className="sm:hidden">Duplicates</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="candidates" className="mt-6">
@@ -381,199 +415,215 @@ export default function AdminDashboard() {
             )}
           </TabsContent>
 
-          <TabsContent value="voters" className="mt-6">
-            <Card className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Voter Management - {selectedDept}</h3>
-                <Button onClick={exportVotersToCSV} variant="outline" size="sm" className="flex items-center gap-2">
-                  <Download className="h-4 w-4" />
+          <TabsContent value="voters" className="mt-4 sm:mt-6">
+            <Card className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h3 className="text-base sm:text-lg font-semibold">Voter Management - {selectedDept}</h3>
+                <Button onClick={exportVotersToCSV} variant="outline" size="sm" className="flex items-center gap-2 text-xs sm:text-sm w-full sm:w-auto">
+                  <Download className="h-3 w-3 sm:h-4 sm:w-4" />
                   Export CSV
                 </Button>
               </div>
               
-              <div className="mb-4 flex items-center gap-4">
+              <div className="mb-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search by name, student ID, or email..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-9 sm:pl-10 text-xs sm:text-sm"
                   />
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
                   {filteredVoters.length} of {voters.length} voters
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Student ID</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Vote Time</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredVoters.length === 0 ? (
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center text-muted-foreground">
-                          {searchTerm ? 'No voters match your search' : 'No voters registered yet'}
-                        </TableCell>
+                        <TableHead className="text-xs sm:text-sm">Name</TableHead>
+                        <TableHead className="text-xs sm:text-sm hidden md:table-cell">Student ID</TableHead>
+                        <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Email</TableHead>
+                        <TableHead className="text-xs sm:text-sm hidden sm:table-cell">Dept</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Status</TableHead>
+                        <TableHead className="text-xs sm:text-sm hidden md:table-cell">Vote Time</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      filteredVoters.map((voter) => (
-                        <TableRow key={voter.id}>
-                          <TableCell className="font-medium">{voter.name}</TableCell>
-                          <TableCell>{voter.student_id}</TableCell>
-                          <TableCell>{voter.email}</TableCell>
-                          <TableCell>{voter.department}</TableCell>
-                          <TableCell>
-                            <Badge variant={voter.has_voted ? 'default' : 'secondary'}>
-                              {voter.has_voted ? '🟢 Voted' : '🔴 Not Voted'}
-                            </Badge>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredVoters.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center text-muted-foreground text-xs sm:text-sm">
+                            {searchTerm ? 'No voters match your search' : 'No voters registered yet'}
                           </TableCell>
-                          <TableCell>
-                            {voter.has_voted && voter.verified_at 
-                              ? new Date(voter.verified_at).toLocaleString()
-                              : '-'}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              {voter.has_voted && (
+                        </TableRow>
+                      ) : (
+                        filteredVoters.map((voter) => (
+                          <TableRow key={voter.id}>
+                            <TableCell className="font-medium text-xs sm:text-sm">
+                              <div>
+                                <div>{voter.name}</div>
+                                <div className="text-xs text-muted-foreground md:hidden">{voter.student_id}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm hidden md:table-cell">{voter.student_id}</TableCell>
+                            <TableCell className="text-xs sm:text-sm hidden lg:table-cell">{voter.email}</TableCell>
+                            <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{voter.department}</TableCell>
+                            <TableCell>
+                              <Badge variant={voter.has_voted ? 'default' : 'secondary'} className="text-xs whitespace-nowrap">
+                                {voter.has_voted ? '🟢 Voted' : '🔴 Not Voted'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm hidden md:table-cell">
+                              {voter.has_voted && voter.verified_at 
+                                ? new Date(voter.verified_at).toLocaleString(undefined, { 
+                                    dateStyle: 'short', 
+                                    timeStyle: 'short' 
+                                  })
+                                : '-'}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1 sm:gap-2">
+                                {voter.has_voted && (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button variant="outline" size="sm" className="text-xs px-2 sm:px-3">
+                                        Reset
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-base sm:text-lg">Reset Voter?</AlertDialogTitle>
+                                        <AlertDialogDescription className="text-xs sm:text-sm">
+                                          This will allow {voter.name} to vote again and delete their previous votes.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel className="text-xs sm:text-sm">Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => handleResetVoter(voter.id, voter.student_id)}
+                                          className="text-xs sm:text-sm"
+                                        >
+                                          Reset
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                )}
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                      Reset
+                                    <Button variant="destructive" size="sm" className="px-2 sm:px-3">
+                                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                                     </Button>
                                   </AlertDialogTrigger>
-                                  <AlertDialogContent>
+                                  <AlertDialogContent className="max-w-[90vw] sm:max-w-md">
                                     <AlertDialogHeader>
-                                      <AlertDialogTitle>Reset Voter?</AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        This will allow {voter.name} to vote again and delete their previous votes.
+                                      <AlertDialogTitle className="text-base sm:text-lg">Delete Voter?</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-xs sm:text-sm">
+                                        This will permanently delete {voter.name} and all their votes. This action cannot be undone.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogCancel className="text-xs sm:text-sm">Cancel</AlertDialogCancel>
                                       <AlertDialogAction
-                                        onClick={() => handleResetVoter(voter.id, voter.student_id)}
+                                        onClick={() => handleDeleteVoter(voter.id, voter.student_id)}
+                                        className="bg-destructive text-xs sm:text-sm"
                                       >
-                                        Reset
+                                        Delete
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
                                 </AlertDialog>
-                              )}
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Voter?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This will permanently delete {voter.name} and all their votes. This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteVoter(voter.id, voter.student_id)}
-                                      className="bg-destructive"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="votes" className="mt-6">
-            <div className="space-y-6">
+          <TabsContent value="votes" className="mt-4 sm:mt-6">
+            <div className="space-y-4 sm:space-y-6">
               {Object.entries(voteCounts).map(([position, candidates]) => (
-                <Card key={position} className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">{position}</h3>
+                <Card key={position} className="p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">{position}</h3>
                   <div className="space-y-2">
                     {Object.entries(candidates)
                       .sort(([, a], [, b]) => (b as number) - (a as number))
                       .map(([candidate, count]) => (
-                        <div key={candidate} className="flex justify-between items-center p-3 bg-muted rounded-lg">
-                          <span className="font-medium">{candidate}</span>
-                          <Badge variant="secondary">{count} votes</Badge>
+                        <div key={candidate} className="flex justify-between items-center p-2 sm:p-3 bg-muted rounded-lg">
+                          <span className="font-medium text-xs sm:text-sm truncate mr-2">{candidate}</span>
+                          <Badge variant="secondary" className="text-xs shrink-0">{count} votes</Badge>
                         </div>
                       ))}
                   </div>
                 </Card>
               ))}
               {Object.keys(voteCounts).length === 0 && (
-                <Card className="p-6">
-                  <p className="text-center text-muted-foreground">No votes recorded yet</p>
+                <Card className="p-4 sm:p-6">
+                  <p className="text-center text-muted-foreground text-xs sm:text-sm">No votes recorded yet</p>
                 </Card>
               )}
             </div>
           </TabsContent>
 
-          <TabsContent value="duplicates" className="mt-6">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Duplicate Voting Attempts</h3>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Student ID</TableHead>
-                      <TableHead>Attempt Time</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {voters.filter(v => v.has_voted).length === 0 ? (
+          <TabsContent value="duplicates" className="mt-4 sm:mt-6">
+            <Card className="p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Duplicate Voting Attempts</h3>
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center text-muted-foreground">
-                          No duplicate attempts detected
-                        </TableCell>
+                        <TableHead className="text-xs sm:text-sm">Student ID</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Attempt Time</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Status</TableHead>
                       </TableRow>
-                    ) : (
-                      voters
-                        .filter(v => v.has_voted)
-                        .map((voter) => {
-                          const voteCount = votes.filter(v => v.student_id === voter.student_id).length;
-                          if (voteCount === 0) return null;
-                          
-                          return (
-                            <TableRow key={voter.id}>
-                              <TableCell>{voter.student_id}</TableCell>
-                              <TableCell>
-                                {new Date(voter.created_at).toLocaleString()}
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant="outline">
-                                  {voteCount} positions voted
-                                </Badge>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                        .filter(Boolean)
-                    )}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {voters.filter(v => v.has_voted).length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center text-muted-foreground text-xs sm:text-sm">
+                            No duplicate attempts detected
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        voters
+                          .filter(v => v.has_voted)
+                          .map((voter) => {
+                            const voteCount = votes.filter(v => v.student_id === voter.student_id).length;
+                            if (voteCount === 0) return null;
+                            
+                            return (
+                              <TableRow key={voter.id}>
+                                <TableCell className="text-xs sm:text-sm">{voter.student_id}</TableCell>
+                                <TableCell className="text-xs sm:text-sm">
+                                  {new Date(voter.created_at).toLocaleString(undefined, {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                  })}
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-xs">
+                                    {voteCount} positions voted
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
+                          .filter(Boolean)
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </Card>
           </TabsContent>

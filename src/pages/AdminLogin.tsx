@@ -8,10 +8,11 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,16 +22,36 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
 
-    // Simple credential check
-    if (username === 'admin25' && password === 'admin2k25') {
-      localStorage.setItem('adminLoggedIn', 'true');
+    try {
+      // Authenticate with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Check if user has admin role
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authData.user.id)
+        .eq('role', 'admin')
+        .single();
+
+      if (roleError || !roleData) {
+        await supabase.auth.signOut();
+        throw new Error('Unauthorized: Admin access required');
+      }
+
       toast.success('Admin login successful!');
       navigate('/admin-dashboard');
-    } else {
-      setError('Invalid admin credentials');
+    } catch (err: any) {
+      setError(err.message || 'Invalid credentials');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -67,12 +88,13 @@ export default function AdminLogin() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter admin username"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter admin email"
               required
             />
           </div>
