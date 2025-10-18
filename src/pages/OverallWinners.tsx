@@ -6,8 +6,9 @@ import { Card } from '@/components/ui/card';
 import { ArrowLeft, Trophy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
-import { POSITIONS, Department } from '@/types';
+import { Department } from '@/types';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
+import { getPositionsForDepartment } from '@/utils/departmentPositions';
 
 interface Winner {
   position: string;
@@ -76,7 +77,10 @@ export default function OverallWinners() {
       const winnersData: DepartmentWinners[] = departments?.map((dept) => {
         const deptVotes = votes?.filter((v) => v.department === dept.short_code) || [];
         
-        const winners: Winner[] = POSITIONS.map((position) => {
+        // Get positions specific to this department
+        const departmentPositions = getPositionsForDepartment(dept.short_code);
+        
+        const winners: Winner[] = departmentPositions.map((position) => {
           const positionVotes = deptVotes.filter((v) => v.position === position);
           
           // Count votes per candidate
@@ -163,7 +167,7 @@ export default function OverallWinners() {
             Winners Across All Departments
           </h1>
           <p className="text-muted-foreground">
-            Live results for all 8 positions across every department
+            Live results for all positions across every department
           </p>
         </motion.div>
 
