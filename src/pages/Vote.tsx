@@ -240,22 +240,23 @@ export default function Vote() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div 
-              className="h-10 w-10 rounded-lg flex items-center justify-center"
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg flex items-center justify-center"
               style={{ backgroundColor: `${department.color_hex}20`, color: department.color_hex }}
             >
-              <DepartmentIcon iconName={department.icon_name} className="h-6 w-6" />
+              <DepartmentIcon iconName={department.icon_name} className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
             <div>
-              <span className="text-lg font-semibold text-foreground block">{department.short_code}</span>
-              <span className="text-xs text-muted-foreground">{department.name}</span>
+              <span className="text-sm sm:text-lg font-semibold text-foreground block">{department.short_code}</span>
+              <span className="text-xs text-muted-foreground hidden sm:inline">{department.name}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowTutorial(true)}>
-              How to Vote
+            <Button variant="outline" size="sm" onClick={() => setShowTutorial(true)} className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">How to Vote</span>
+              <span className="sm:hidden">Guide</span>
             </Button>
             <DarkModeToggle />
           </div>
@@ -263,20 +264,20 @@ export default function Vote() {
       </header>
 
       {/* Progress Bar */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-xs sm:text-sm font-medium text-foreground">
               {isPartylistStep ? 'Partylist Selection' : `Position ${currentPosition + 1} of ${positions.length}`}
             </span>
-            <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">{Math.round(progress)}%</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
       </div>
 
       {/* Voting Form */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <motion.div
           key={currentPosition}
           initial={{ opacity: 0, x: 20 }}
@@ -284,13 +285,13 @@ export default function Vote() {
           exit={{ opacity: 0, x: -20 }}
           className="max-w-2xl mx-auto"
         >
-          <Card className="p-8">
+          <Card className="p-4 sm:p-6 md:p-8">
             {isPartylistStep ? (
               <>
-                <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-center text-foreground">
                   Select Your Partylists
                 </h2>
-                <p className="text-sm text-muted-foreground text-center mb-6">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center mb-4 sm:mb-6">
                   Choose up to 2 partylists that best represent your vision for {department.short_code}
                 </p>
 
@@ -329,14 +330,14 @@ export default function Vote() {
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-bold mb-6 text-center text-foreground">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-center text-foreground">
                   {position}
                 </h2>
 
                 {positionCandidates.length === 0 ? (
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
+                    <AlertDescription className="text-xs sm:text-sm">
                       No candidates available for this position.
                     </AlertDescription>
                   </Alert>
@@ -344,18 +345,18 @@ export default function Vote() {
                   <RadioGroup
                     value={votes[position!] || ''}
                     onValueChange={(value) => setVotes({ ...votes, [position!]: value })}
-                    className="space-y-3"
+                    className="space-y-2 sm:space-y-3"
                   >
                     {positionCandidates.map((candidate) => (
-                      <div key={candidate.id} className="flex items-center space-x-3">
+                      <div key={candidate.id} className="flex items-center space-x-2 sm:space-x-3">
                         <RadioGroupItem value={candidate.candidate_name} id={candidate.id} />
                         <Label
                           htmlFor={candidate.id}
-                          className="flex-1 cursor-pointer p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
+                          className="flex-1 cursor-pointer p-3 sm:p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-colors"
                         >
-                          <div className="font-semibold text-foreground">{candidate.candidate_name}</div>
+                          <div className="font-semibold text-sm sm:text-base text-foreground">{candidate.candidate_name}</div>
                           {candidate.year_level && (
-                            <div className="text-sm text-muted-foreground">{candidate.year_level}</div>
+                            <div className="text-xs sm:text-sm text-muted-foreground">{candidate.year_level}</div>
                           )}
                         </Label>
                       </div>
@@ -365,11 +366,12 @@ export default function Vote() {
               </>
             )}
 
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6 sm:mt-8">
               <Button
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentPosition === 0}
+                className="w-full sm:w-auto"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Previous
@@ -377,8 +379,8 @@ export default function Vote() {
               <Button
                 onClick={handleNext}
                 disabled={isPartylistStep ? selectedPartylists.length === 0 : !votes[position!]}
+                className="w-full sm:w-auto text-white hover:opacity-90"
                 style={{ backgroundColor: department.color_hex }}
-                className="text-white hover:opacity-90"
               >
                 {isPartylistStep ? (
                   <>

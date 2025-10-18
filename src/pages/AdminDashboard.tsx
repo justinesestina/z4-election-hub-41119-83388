@@ -66,6 +66,12 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [votingStatus, setVotingStatus] = useState<string>('not_started');
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('adminAuthenticated');
+    toast.success('Logged out successfully');
+    navigate('/admin-login');
+  };
+
   useEffect(() => {
     fetchDepartments();
   }, []);
@@ -151,11 +157,6 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success('Logged out successfully');
-    navigate('/admin-login');
-  };
 
   const fetchDepartmentData = async (deptCode: string) => {
     // Fetch voters

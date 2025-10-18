@@ -24,45 +24,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Admin Protected Route
-import { useState, useEffect } from 'react';
-import { supabase } from './integrations/supabase/client';
-
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const isAuthenticated = sessionStorage.getItem('adminAuthenticated') === 'true';
 
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        setIsAdmin(false);
-        return;
-      }
-
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .eq('role', 'admin')
-        .single();
-
-      setIsAdmin(!!roleData);
-    };
-
-    checkAdminStatus();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      checkAdminStatus();
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isAdmin === null) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  if (!isAuthenticated) {
+    return <Navigate to="/admin-login" replace />;
   }
 
-  return isAdmin ? <>{children}</> : <Navigate to="/admin-login" replace />;
+  return <>{children}</>;
 };
 
 const queryClient = new QueryClient();

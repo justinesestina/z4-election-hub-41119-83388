@@ -8,11 +8,10 @@ import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
-import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,32 +22,17 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // Authenticate with Supabase
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError) throw authError;
-
-      // Check if user has admin role
-      const { data: roleData, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', authData.user.id)
-        .eq('role', 'admin')
-        .single();
-
-      if (roleError || !roleData) {
-        await supabase.auth.signOut();
-        throw new Error('Unauthorized: Admin access required');
+      // Simple credential check
+      if (username === 'admin25' && password === 'admin2k25') {
+        // Store admin session
+        sessionStorage.setItem('adminAuthenticated', 'true');
+        toast.success('Admin login successful!');
+        navigate('/admin-dashboard');
+      } else {
+        throw new Error('Invalid username or password');
       }
-
-      toast.success('Admin login successful!');
-      navigate('/admin-dashboard');
     } catch (err: any) {
       setError(err.message || 'Invalid credentials');
-      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -88,14 +72,15 @@ export default function AdminLogin() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="username">Username</Label>
             <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter admin email"
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
               required
+              autoComplete="username"
             />
           </div>
 
@@ -106,8 +91,9 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
+              placeholder="Enter password"
               required
+              autoComplete="current-password"
             />
           </div>
 
