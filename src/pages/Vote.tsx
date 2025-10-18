@@ -48,6 +48,9 @@ export default function Vote() {
   const navigate = useNavigate();
   const state = location.state as LocationState;
 
+  // Normalize department code (handle "BS Nursing" -> "NURSING" mapping)
+  const normalizedDeptCode = deptCode === 'BS Nursing' ? 'NURSING' : deptCode;
+
   const [currentPosition, setCurrentPosition] = useState(0);
   const [votes, setVotes] = useState<Record<string, string>>({});
   const [selectedPartylists, setSelectedPartylists] = useState<string[]>([]);
@@ -55,16 +58,16 @@ export default function Vote() {
   const [submitting, setSubmitting] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   
-  const positions = deptCode ? getPositionsForDepartment(deptCode) : [];
+  const positions = normalizedDeptCode ? getPositionsForDepartment(normalizedDeptCode) : [];
 
   // Fetch department info
   const { data: department } = useQuery({
-    queryKey: ['department', deptCode],
+    queryKey: ['department', normalizedDeptCode],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('departments')
         .select('*')
-        .eq('short_code', deptCode)
+        .eq('short_code', normalizedDeptCode)
         .single();
       
       if (error) throw error;
@@ -74,12 +77,12 @@ export default function Vote() {
 
   // Fetch candidates for this department
   const { data: candidates = [] } = useQuery({
-    queryKey: ['candidates', deptCode],
+    queryKey: ['candidates', normalizedDeptCode],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('candidates')
         .select('*')
-        .eq('department', deptCode)
+        .eq('department', normalizedDeptCode)
         .order('position')
         .order('candidate_name');
       
@@ -90,12 +93,12 @@ export default function Vote() {
 
   // Fetch partylists for this department
   const { data: partylists = [] } = useQuery({
-    queryKey: ['partylists', deptCode],
+    queryKey: ['partylists', normalizedDeptCode],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('partylists')
         .select('*')
-        .eq('department', deptCode)
+        .eq('department', normalizedDeptCode)
         .order('name');
       
       if (error) throw error;
