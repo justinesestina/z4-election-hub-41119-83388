@@ -6,9 +6,10 @@ import { Card } from '@/components/ui/card';
 import { ArrowLeft, Trophy, Users, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { DepartmentIcon } from '@/components/DepartmentIcon';
-import { POSITIONS, Department } from '@/types';
+import { Department } from '@/types';
 import { DarkModeToggle } from '@/components/DarkModeToggle';
 import { useQuery } from '@tanstack/react-query';
+import { getPositionsForDepartment } from '@/utils/departmentPositions';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 
 interface VoteCount {
@@ -124,6 +125,9 @@ export default function Results() {
     0
   );
 
+  // Get positions for the current department
+  const positions = deptCode ? getPositionsForDepartment(deptCode) : [];
+
   // Color palette for different positions - professional gradients
   const positionColors: Record<string, string> = {
     'President': '#8B5CF6',        // Purple
@@ -226,7 +230,7 @@ export default function Results() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Positions</p>
-                  <p className="text-2xl font-bold text-foreground">{POSITIONS.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{positions.length}</p>
                 </div>
               </div>
             </Card>
@@ -310,7 +314,7 @@ export default function Results() {
 
         {/* Results Charts */}
         <div className="space-y-8">
-          {POSITIONS.map((position, index) => {
+          {positions.map((position, index) => {
             const positionCounts = voteCounts[position] || [];
             const maxVotes = positionCounts[0]?.count || 0;
             const positionColor = positionColors[position] || department.color_hex;
