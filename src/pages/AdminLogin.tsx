@@ -23,8 +23,9 @@ export default function AdminLogin() {
 
     try {
       // Simple credential check
-      if (username === 'admin25' && password === 'admin2k25') {
-        // Store admin session
+      if (username.trim() === 'admin25' && password === 'admin2k25') {
+        // Store admin session in localStorage for cross-device/browser persistence
+        localStorage.setItem('adminAuthenticated', 'true');
         sessionStorage.setItem('adminAuthenticated', 'true');
         toast.success('Admin login successful!');
         navigate('/admin-dashboard');

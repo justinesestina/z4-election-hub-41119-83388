@@ -68,6 +68,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     sessionStorage.removeItem('adminAuthenticated');
+    localStorage.removeItem('adminAuthenticated');
     toast.success('Logged out successfully');
     navigate('/admin-login');
   };

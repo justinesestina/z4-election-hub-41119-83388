@@ -48,8 +48,26 @@ export default function Vote() {
   const navigate = useNavigate();
   const state = location.state as LocationState;
 
-  // Normalize department code (handle "BS Nursing" -> "NURSING" mapping)
-  const normalizedDeptCode = deptCode === 'BS Nursing' ? 'NURSING' : deptCode;
+  // Normalize department code to handle any legacy or full name codes
+  const normalizeDepartmentCode = (code: string | undefined): string | undefined => {
+    if (!code) return code;
+    
+    const mapping: Record<string, string> = {
+      'BS Nursing': 'NURSING',
+      'College of Psychology': 'PSYCHOLOGY',
+      'College of Engineering': 'ENGINEERING',
+      'College of Criminology': 'CRIMINOLOGY',
+      'College of Education': 'EDUCATION',
+      'College of Agriculture': 'AGRICULTURE',
+      'College of Arts and Sciences': 'CAS',
+      'College of Business Administration': 'CBA',
+      'College of Tourism and Hospitality Management': 'CTHM',
+    };
+    
+    return mapping[code] || code;
+  };
+  
+  const normalizedDeptCode = normalizeDepartmentCode(deptCode);
 
   const [currentPosition, setCurrentPosition] = useState(0);
   const [votes, setVotes] = useState<Record<string, string>>({});

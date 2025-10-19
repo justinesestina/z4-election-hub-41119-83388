@@ -25,7 +25,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Admin Protected Route
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = sessionStorage.getItem('adminAuthenticated') === 'true';
+  const isAuthenticated = 
+    sessionStorage.getItem('adminAuthenticated') === 'true' ||
+    localStorage.getItem('adminAuthenticated') === 'true';
 
   if (!isAuthenticated) {
     return <Navigate to="/admin-login" replace />;

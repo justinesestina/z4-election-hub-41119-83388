@@ -6,19 +6,19 @@ export const courseMapping: Record<string, string> = {
   'BSIS': 'CCS',
   
   // Nursing
-  'BS Nursing': 'BS Nursing',
-  'Midwifery': 'BS Nursing',
-  'Health Care Services': 'BS Nursing',
+  'BS Nursing': 'NURSING',
+  'Midwifery': 'NURSING',
+  'Health Care Services': 'NURSING',
   
   // Psychology
-  'BS Psychology': 'College of Psychology',
-  'Behavioral Science': 'College of Psychology',
+  'BS Psychology': 'PSYCHOLOGY',
+  'Behavioral Science': 'PSYCHOLOGY',
   
   // Engineering
-  'BSCE': 'College of Engineering',
-  'BSCpE': 'College of Engineering',
-  'BSME': 'College of Engineering',
-  'BSEE': 'College of Engineering',
+  'BSCE': 'ENGINEERING',
+  'BSCpE': 'ENGINEERING',
+  'BSME': 'ENGINEERING',
+  'BSEE': 'ENGINEERING',
   
   // Arts & Sciences
   'AB English': 'CAS',
@@ -38,16 +38,16 @@ export const courseMapping: Record<string, string> = {
   'BSTM': 'CTHM',
   
   // Criminology
-  'BS Criminology': 'College of Criminology',
-  'BS Forensic Science': 'College of Criminology',
+  'BS Criminology': 'CRIMINOLOGY',
+  'BS Forensic Science': 'CRIMINOLOGY',
   
   // Education
-  'BEEd': 'College of Education',
-  'BSEd': 'College of Education',
+  'BEEd': 'EDUCATION',
+  'BSEd': 'EDUCATION',
   
   // Agriculture
-  'BS Agriculture': 'College of Agriculture',
-  'BS Agribusiness': 'College of Agriculture',
+  'BS Agriculture': 'AGRICULTURE',
+  'BS Agribusiness': 'AGRICULTURE',
 };
 
 // List of all available courses with their full names and departments
@@ -58,19 +58,19 @@ export const availableCourses = [
   { code: 'BSIS', name: 'Bachelor of Science in Information Systems', dept: 'CCS' },
   
   // Nursing
-  { code: 'BS Nursing', name: 'Bachelor of Science in Nursing', dept: 'BS Nursing' },
-  { code: 'Midwifery', name: 'Midwifery', dept: 'BS Nursing' },
-  { code: 'Health Care Services', name: 'Health Care Services', dept: 'BS Nursing' },
+  { code: 'BS Nursing', name: 'Bachelor of Science in Nursing', dept: 'NURSING' },
+  { code: 'Midwifery', name: 'Midwifery', dept: 'NURSING' },
+  { code: 'Health Care Services', name: 'Health Care Services', dept: 'NURSING' },
   
   // Psychology
-  { code: 'BS Psychology', name: 'Bachelor of Science in Psychology', dept: 'College of Psychology' },
-  { code: 'Behavioral Science', name: 'Behavioral Science', dept: 'College of Psychology' },
+  { code: 'BS Psychology', name: 'Bachelor of Science in Psychology', dept: 'PSYCHOLOGY' },
+  { code: 'Behavioral Science', name: 'Behavioral Science', dept: 'PSYCHOLOGY' },
   
   // Engineering
-  { code: 'BSCE', name: 'Bachelor of Science in Civil Engineering', dept: 'College of Engineering' },
-  { code: 'BSCpE', name: 'Bachelor of Science in Computer Engineering', dept: 'College of Engineering' },
-  { code: 'BSME', name: 'Bachelor of Science in Mechanical Engineering', dept: 'College of Engineering' },
-  { code: 'BSEE', name: 'Bachelor of Science in Electrical Engineering', dept: 'College of Engineering' },
+  { code: 'BSCE', name: 'Bachelor of Science in Civil Engineering', dept: 'ENGINEERING' },
+  { code: 'BSCpE', name: 'Bachelor of Science in Computer Engineering', dept: 'ENGINEERING' },
+  { code: 'BSME', name: 'Bachelor of Science in Mechanical Engineering', dept: 'ENGINEERING' },
+  { code: 'BSEE', name: 'Bachelor of Science in Electrical Engineering', dept: 'ENGINEERING' },
   
   // Arts & Sciences
   { code: 'AB English', name: 'Bachelor of Arts in English', dept: 'CAS' },
@@ -90,16 +90,16 @@ export const availableCourses = [
   { code: 'BSTM', name: 'Bachelor of Science in Tourism Management', dept: 'CTHM' },
   
   // Criminology
-  { code: 'BS Criminology', name: 'Bachelor of Science in Criminology', dept: 'College of Criminology' },
-  { code: 'BS Forensic Science', name: 'Bachelor of Science in Forensic Science', dept: 'College of Criminology' },
+  { code: 'BS Criminology', name: 'Bachelor of Science in Criminology', dept: 'CRIMINOLOGY' },
+  { code: 'BS Forensic Science', name: 'Bachelor of Science in Forensic Science', dept: 'CRIMINOLOGY' },
   
   // Education
-  { code: 'BEEd', name: 'Bachelor of Elementary Education', dept: 'College of Education' },
-  { code: 'BSEd', name: 'Bachelor of Secondary Education', dept: 'College of Education' },
+  { code: 'BEEd', name: 'Bachelor of Elementary Education', dept: 'EDUCATION' },
+  { code: 'BSEd', name: 'Bachelor of Secondary Education', dept: 'EDUCATION' },
   
   // Agriculture
-  { code: 'BS Agriculture', name: 'Bachelor of Science in Agriculture', dept: 'College of Agriculture' },
-  { code: 'BS Agribusiness', name: 'Bachelor of Science in Agribusiness', dept: 'College of Agriculture' },
+  { code: 'BS Agriculture', name: 'Bachelor of Science in Agriculture', dept: 'AGRICULTURE' },
+  { code: 'BS Agribusiness', name: 'Bachelor of Science in Agribusiness', dept: 'AGRICULTURE' },
 ];
 
 export const mapCourseToDepartment = (courseCode: string): string | null => {
